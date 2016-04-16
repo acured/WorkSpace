@@ -1,0 +1,322 @@
+import time
+import math
+
+class worker:   
+    def __init__(self):
+        print("worker ready!")
+        self.expectDistance =45
+        self.integral = 0.0
+        self.derivative = 0.0
+        self.previuos_dd = 0.0
+        self.dd = 0.0        
+	self.dt = 0.05
+
+        #self.Kp = 0.005
+        #self.Kp = 0.0025
+	self.Kp = 0.005
+	#self.Ki = 0.006
+	#self.Ki = 0.0025
+        self.Ki = 0.001
+
+	#self.Kd = 0.0008
+	#self.Kd = 0.006
+	self.Kd = 0.025
+        
+	self._Pk = 200.0
+        self._Xk = 0.0
+
+        self.stutas = ""
+        self.cmd = ""
+        self.Dir = "G"
+
+    def PassGap(self,device):
+        print("do PassGap")
+        leftspeed = 40
+	rightspeed = 36
+        out = 20
+        self.stutas = "passGap"
+	device.startwallfollow()
+	time.sleep(0.1)
+	while 1:
+            if(self.cmd == "stop"):
+                self.cmd = ""
+                self.stutas = "stop"
+                device.setspeed(0,0,0,0)
+                device.stopCMD()
+                break
+            print(self.Dir)
+	    print(self.Dir=="go")
+            dire = self.Dir
+            if(dire=="right"):
+		print "do turn right"
+		device.setspeed(0,0,0,0)
+		time.sleep(0.015)
+                left = leftspeed+abs(out)
+                right = rightspeed
+                device.setspeed(0,1,left,right)
+		time.sleep(0.3)
+		device.setspeed(0,0,0,0)
+		#self.TurnLRight(device)
+            if(dire=="left"):
+		print "do turn left"
+		device.setspeed(0,0,0,0)
+		time.sleep(0.015)
+                left = leftspeed
+                right = rightspeed+abs(out)
+                #self.TurnLLeft(device)
+		device.setspeed(0,1,left,right)
+		time.sleep(0.3)
+		device.setspeed(0,0,0,0)
+            if(dire=="go"):
+		#print leftspeed,rightspeed
+		print "do go"
+                #self.Go(device)
+		#time.sleep(0.2)
+		#device.setspeed(0,0,0,0)
+		device.setspeed(0,1,leftspeed,rightspeed)
+		#time.sleep(1)
+		#device.setspeed(0,0,0,0)
+		print "do stop"
+            time.sleep(0.5)
+        return "PassGap"
+
+    def followLeftWall(self,device):
+        print("do followLeftWall")       
+        device.startwallfollow()
+        time.sleep(0.1)
+        
+        counter = [0]
+	self.previuos_dd = 0.0
+        self.integral = 0.0
+	self.derivative = 0.0
+	self.dd = 0.0
+	self._Pk = 200.0
+	self._Xk = 0.0
+
+	leftspeed = 40
+	rightspeed = 36
+	
+	while 1:
+	    stopwatch = time.time()
+            counter[0] = counter[0] + 1
+            #device.updateDistance()
+            LF = device.Dis[0]
+            LR = device.Dis[1]
+            L = min(LF,LR)
+	    
+	    if(L>9000):
+		print("out of rang!")
+		device.setspeed(0,1,leftspeed,rightspeed)
+		continue
+            #print(LF,LR)
+            q = 100.0
+            r = 10.0
+            Pk = self._Pk + q
+            Kk = 0.0
+            Kk = Pk / (Pk + r)
+
+        
+            self._Xk = self._Xk + Kk * (L - self._Xk)
+            self._Pk = (1 - Kk) * Pk
+            L = self._Xk
+
+
+            error = L - self.expectDistance
+            self.dd = error
+            self.integral = self.integral + self.dd * self.dt
+            self.derivative = (self.dd - self.previuos_dd) / 0.05
+            output = self.Kp * self.dd + self.Ki * self.integral + self.Kd * self.derivative
+            self.previuos_dd = self.dd
+	    x1 = self.dd*self.Kp*100
+	    x2 = self.integral*self.Ki*100
+            x3 = self.derivative*self.Kd*100
+	    #print("---------------------------------------------------")
+	    #print(LF,LR)
+	    out = int(output * 100)
+	    print(L,x1,x2,x3,out)
+            #out = int(output * 100)
+	    #if(out<0):
+	    #    print(L,out,"Right")
+	    #if(out>0):
+	    #	print(L,out,"Left")
+
+	    #add some code
+	    #a = 25
+	    #v0 = 50
+	    #temp1 = out/(v0*self.dt)
+            #temp2 = math.atan(temp1)
+	    #temp3 = a*temp2
+
+	    #out = temp3
+	    #dV = math.atan(output/(0.5*self.dt))/self.dt
+	    #print(abs(out))
+	    #print(out)
+            if(self.cmd == "stop"):
+                self.cmd = ""
+                self.stutas = "stop"
+                device.setspeed(0,0,0,0)
+                device.stopCMD()
+                break
+            if(LF>500000):
+		print "out of rang!"
+                device.setspeed(0,0,0,0)
+                device.stopCMD()
+                break
+            if(out<0):
+                left = leftspeed+abs(out)
+                right = rightspeed
+                device.setspeed(0,1,left,right)
+                # print(left,right)
+            if(out>0):
+                left = leftspeed
+                right = rightspeed+abs(out)
+                device.setspeed(0,1,left,right)
+                #print(left,right)
+            if(out==0):
+		device.setspeed(0,1,leftspeed,rightspeed)
+                #self.Go(device)
+                #print(left,right)
+            #time.sleep(0.1)
+	    stopwatch = time.time() - stopwatch
+	    self.dt = stopwatch	    
+	    #print(stopwatch)
+        return "Follow_Left_Wall"
+    
+    def followRightWall(self,device):
+        print("do followRightWall")
+        counter = [0]
+    
+        while 1:        
+            counter[0] = counter[0] + 1
+            #device.updateDistance()
+            RF = device.Dis[2]
+            RR = device.Dis[3]
+            R = min(RF,RR)
+     
+            q = 100.0
+            r = 10.0
+            Pk = self._Pk + q
+            Kk = 0.0
+            Kk = Pk / (Pk + r)
+
+        
+            self._Xk = self._Xk + Kk * (R - self._Xk)
+            self._Pk = (1 - Kk) * Pk
+            R = self._Xk
+
+
+            error = R - self.expectDistance
+            self.dd = error
+            self.integral = self.integral + self.dd * self.dt
+            self.derivative = (self.dd - self.previuos_dd) / self.dt
+            output = self.Kp * self.dd + self.Ki * self.integral + self.Kd * self.derivative
+            self.previuos_dd = self.dd
+
+            out = int(output * 100)
+
+            print(output)
+        
+            if(output>0):
+                device.setspeed(1,0,50+abs(out),50)
+            if(output<0):
+                device.setspeed(1,0,50,50+abs(out))
+            if(output==0):
+                device.setspeed(1,0,50,50)
+        
+            if(counter[0]>20):
+                break
+        return "Follow_Right_Wall"
+    
+    def GetDis(self,device):
+        #print("do GetDis")
+        #device.updateDistance()
+        return str(device.Dis[0])+';'+str(device.Dis[1])+';'+str(device.Dis[2])+';'+str(device.Dis[3])
+
+    def Halt(self,device):    
+        device.stop()
+        return "Halt"
+
+    def action5(self,device):    
+        print("do check")
+        return "Check"
+
+    def TurnLeft(self,device):
+        print("do TurnLeft")
+        device.startwallfollow()
+        time.sleep(0.1)
+        device.setspeed(1,0,30,40)
+        time.sleep(0.1)
+        while 1:
+            dis = device.Dis[0]
+            if(self.cmd == "stop"):
+                self.cmd = ""
+                self.stutas = "stop"
+                device.setspeed(0,0,0,0)
+		time.sleep(0.1)
+                device.stopCMD()
+                print("stoped by master!")
+                break
+            if(dis<45):
+                device.setspeed(0,0,0,0)
+		time.sleep(0.1)
+                device.stopCMD()
+                print("TurnLeft done!")
+                break
+            time.sleep(0.2)
+        return "TurnLeft"
+
+    def TurnLLeft(self,device):
+        print("do TurnLLeft")
+        device.startwallfollow()
+        time.sleep(0.1)
+        device.setspeed(1,0,40,0)
+        time.sleep(0.4)
+        device.setspeed(0,0,0,0)
+        time.sleep(0.1)
+        device.stopCMD()
+        return "TurnLLeft"
+
+    def TurnLRight(self,device):
+        print("do TurnLRight")
+        device.startwallfollow()
+        time.sleep(0.1)
+        device.setspeed(1,0,0,40)
+        time.sleep(0.4)
+        device.setspeed(0,0,0,0)
+        time.sleep(0.1)
+        device.stopCMD()
+        return "TurnLRight"
+
+    def Go(self,device):
+        print("do Go")
+        device.startGo()
+        time.sleep(0.1)
+        device.setspeed(0,1,25,25)
+        while 1:
+            if(self.cmd == "stop"):
+                self.cmd = ""
+                self.stutas = "stop"
+                device.setspeed(0,0,0,0)
+                time.sleep(0.1)
+		device.stopCMD()
+                print("stoped by master!")
+                break
+            time.sleep(0.1)
+        return "Go"
+
+    def doWork(self,cmd,device):
+        ActionMap = {
+            "Follow_Left_Wall": self.followLeftWall,
+            "Follow_Right_Wall": self.followRightWall,
+            "GetDIS": self.GetDis,
+            "Halt": self.Halt,
+            "Check": self.action5,
+            "TurnLeft": self.TurnLeft,
+            "TurnLLeft": self.TurnLLeft,
+            "TurnLRight": self.TurnLRight,
+            "Go": self.Go,
+            "PassGap": self.PassGap
+        }
+        func = ActionMap.get(cmd, lambda(device): "null")
+        value = func(device)
+        return value

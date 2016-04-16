@@ -1,0 +1,153 @@
+import time
+class worker:   
+    def __init__(self):
+        print("worker ready!")
+        self.expectDistance = 70.0
+        self.integral = 0.0
+        self.derivative = 0.0
+        self.previuos_dd = 0.0
+        self.dd = 0.0
+        
+	self.dt = 0.01
+        self.Kp = 0.002
+        self.Ki = 0.00008
+        self.Kd = 0.0005
+
+        self._Pk = 200.0
+        self._Xk = 0.0
+
+        self.stutas = ""
+        self.cmd = ""
+
+    def followLeftWall(self,device):
+        print("do followLeftWall")
+        counter = [0]
+	self.previuos_dd = 0.0    
+        self.integral = 0.0
+	self.derivative = 0.0
+	self.dd = 0.0
+	self._Pk = 200.0
+	self._Xk = 0.0
+	
+	while 1:
+            counter[0] = counter[0] + 1
+            #device.updateDistance()
+            LF = device.Dis[0]
+            LR = device.Dis[1]
+            L = min(LF,LR)
+            # print(LF,LR)
+            q = 100.0
+            r = 10.0
+            Pk = self._Pk + q
+            Kk = 0.0
+            Kk = Pk / (Pk + r)
+
+        
+            self._Xk = self._Xk + Kk * (L - self._Xk)
+            self._Pk = (1 - Kk) * Pk
+            L = self._Xk
+
+
+            error = L - self.expectDistance
+            self.dd = error
+            self.integral = self.integral + self.dd * self.dt
+            self.derivative = (self.dd - self.previuos_dd) / self.dt
+            output = self.Kp * self.dd + self.Ki * self.integral + self.Kd * self.derivative
+            self.previuos_dd = self.dd
+	    print(self.dd,self.integral,self.derivative)
+            out = int(output * 100)
+            print(L,out)
+
+            if(self.cmd == "stop"):
+                self.cmd = ""
+                self.stutas = "stop"
+                device.setspeed(0,0,0,0)
+                break
+            if(LF>400):
+                device.setspeed(0,0,0,0)
+                break
+            if(out<0):
+                left = 50+abs(out)
+                right = 50
+                device.setspeed(1,0,left,right)
+                # print(left,right)
+            if(out>0):
+                left = 50
+                right = 50+abs(out)
+                device.setspeed(1,0,left,right)
+                #print(left,right)
+            if(out==0):
+                device.setspeed(1,0,50,50)
+                #print(left,right)
+            time.sleep(0.2)
+        return "Follow_Left_Wall"
+    
+    def followRightWall(self,device):
+        print("do followRightWall")
+        counter = [0]
+    
+        while 1:        
+            counter[0] = counter[0] + 1
+            #device.updateDistance()
+            RF = device.Dis[2]
+            RR = device.Dis[3]
+            R = min(RF,RR)
+     
+            q = 100.0
+            r = 10.0
+            Pk = self._Pk + q
+            Kk = 0.0
+            Kk = Pk / (Pk + r)
+
+        
+            self._Xk = self._Xk + Kk * (R - self._Xk)
+            self._Pk = (1 - Kk) * Pk
+            R = self._Xk
+
+
+            error = R - self.expectDistance
+            self.dd = error
+            self.integral = self.integral + self.dd * self.dt
+            self.derivative = (self.dd - self.previuos_dd) / self.dt
+            output = self.Kp * self.dd + self.Ki * self.integral + self.Kd * self.derivative
+            self.previuos_dd = self.dd
+
+            out = int(output * 100)
+
+            print(output)
+        
+            if(output>0):
+                device.setspeed(1,0,50+abs(out),50)
+            if(output<0):
+                device.setspeed(1,0,50,50+abs(out))
+            if(output==0):
+                device.setspeed(1,0,50,50)
+        
+            if(counter[0]>20):
+                break
+        return "Follow_Right_Wall"
+    
+    def GetDis(self,device):
+        #print("do GetDis")
+        #device.updateDistance()
+        return str(device.Dis[0])+';'+str(device.Dis[1])+';'+str(device.Dis[2])+';'+str(device.Dis[3])
+
+    def Halt(self,device):    
+        device.stop()
+        return "Halt"
+
+    def action5(self,device):    
+        print("do check")
+        return "Check"
+
+    def doWork(self,cmd,device):
+        ActionMap = {
+            "Follow_Left_Wall": self.followLeftWall,
+            "Follow_Right_Wall": self.followRightWall,
+            "GetDIS": self.GetDis,
+            "Halt": self.Halt,
+            "Check": self.action5
+        }
+        func = ActionMap.get(cmd, lambda(device): "null")
+        value = func(device)
+        return value

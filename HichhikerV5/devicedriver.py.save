@@ -1,0 +1,104 @@
+import serial
+import os
+import time
+
+class devicedriver:
+    def __init__(self):        
+        self.motorDevice=''
+        self.sensorDevice=''
+        self.Dis = [9999.0,9999.0,9999.0,9999.0]
+        self.isReady = False
+        
+    def checkDevice(self):
+        ser = []
+        parked=[]
+        checkdata=bytes(0x00)
+        print("device initialize....")
+        for vtr in range(0,12):
+            if os.path.exists('/dev/ttyUSB'+str(vtr)):
+                ser.append(serial.Serial('/dev/ttyUSB'+str(vtr), 9600, timeout=0.1, parity=serial.PARITY_ODD, stopbits=1))
+                parked.append(vtr+1)
+
+        for s in ser:
+            while True:
+                s.write(checkdata)
+                time.sleep(1)
+                response=s.readline()
+                if(response=="motor\r\n"):
+                    self.motorDevice = s
+                    print("Motor driver ready!")
+                if(response=="sensor\r\n"):
+                    self.sensorDevice = s
+                    print("Sensor driver ready!")
+                break;
+
+        if(self.motorDevice<>'' and self.sensorDevice<>''):
+            print("all driver are connected!")
+            isReady = True
+        else:
+            if(self.sensorDevice==''):
+                print("Sensor connecte fault!")
+            if(self.motorDevice==''):
+                print("Motor connecte fault!")
+            isReady = False
+                    
+    def updateDistance(self):
+        if(self.sensorDevice==''):
+            print("Sensor connecte fault!")
+            return
+        cmdGetDis=bytes([0x01])
+        while True:
+            self.sensorDevice.write(cmdGetDis)
+            result = self.sensorDevice.readline()
+            if(result==""):
+                result = self.sensorDevice.readline()
+            response=result.split('\r',1)[0]
+
+            dis = response.split(';', 4 )
+            self.Dis[0] = float(dis[0])
+            self.Dis[1] = float(dis[1])
+            self.Dis[2] = float(dis[2])
+            self.Dis[3] = float(dis[3])
+            break
+    def startWallFollow(self):
+	
+    def setspeed(self,dirl,dirr,l,r):
+        if(self.motorDevice==''):
+            print("Motor connecte fault!")
+            return        
+        message = ''
+        if(dirl):
+            message = str(1)
+        else:
+            message = str(0)
+
+        if(dirr):
+            message = message + str(1)
+        else:
+            message = message + str(0)
+
+        if(l>99):
+            l=99
+        if(l<0):
+            l=0
+
+        if(r>99):
+            r=99
+        if(r<0):
+            r=0
+            
+        #if(r>55):
+        #    r = r - 5
+        
+        message = message+str(l)+str(r)
+        #print(message)
+        self.motorDevice.write(message.encode())
+    def stop(self):
+        if(self.motorDevice==''):
+            print("Motor connecte fault!")
+            return        
+        message = '000000'        
+                message = '000000'
+        self.motorDevice.write(message.encode())
+self.motorDevice.write(message.encode())
+        #self.motorDevice.flush()
