@@ -14,12 +14,14 @@ D:\workspace\Projects\AgriManagement\AgriManagement\obj\Debug\AgriManagement.pdb
 D:\workspace\Projects\AgriManagement\AgriManagement\obj\Debug\AgriManagement.csprojResolveAssemblyReference.cache
 D:\workspace\Projects\AgriManagement\AgriManagement\obj\Debug\AddUser.g.cs
 D:\workspace\Projects\AgriManagement\AgriManagement\obj\Debug\AddUser.baml
+D:\workspace\Projects\AgriManagement - Copy\AgriManagement\bin\Debug\AgriManagement.exe.config
+D:\workspace\Projects\AgriManagement - Copy\AgriManagement\obj\Debug\AgriManagement.exe
+D:\workspace\Projects\AgriManagement - Copy\AgriManagement\obj\Debug\AgriManagement.pdb
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\bin\Debug\AgriManagement.exe.config
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.exe
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.pdb
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\bin\Debug\AgriManagement.exe
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\bin\Debug\AgriManagement.pdb
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.csprojResolveAssemblyReference.cache
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AddUser.g.cs
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\MainWindow.g.cs
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\App.g.cs
