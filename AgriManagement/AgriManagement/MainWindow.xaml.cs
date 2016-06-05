@@ -87,11 +87,8 @@ namespace AgriManagement
         Random ran = new Random();
         public MainWindow()
         {            
-            //testInitData();
-            //_cloud.PostMethodMulti("kebin", "");
-            //StaticTools.GetAllNodesByArea("牛舍");
             InitializeComponent();
-            initdateTest();
+            InitSensors();
             initUI();
             updateFacilityStatus();
 
@@ -105,7 +102,7 @@ namespace AgriManagement
         {
             DateTime start = DateTime.Now.AddDays(-30);
             DateTime end = DateTime.Now;
-            initdateTest();
+            InitSensors();
 
             while (start < end)
             {
@@ -471,7 +468,7 @@ namespace AgriManagement
 
         }
 
-        private void initdateTest()
+        private void InitSensors()
         {
             for (int i = 0; i < sensorCount; i++)
             {
@@ -486,7 +483,6 @@ namespace AgriManagement
                 item.historys = new List<History>();
                 items.Add(i.ToString(), item);
                 cloudData.Add(i.ToString(), ls1);
-                //StaticTools.AddNode(item.area, item.id.ToString(), item.id.ToString());
             }
         }
 
@@ -620,14 +616,14 @@ namespace AgriManagement
                     start = 0;
                     yAxie = top + heigh - StaticTools.GetYaxia(items[id].historys[0].temperature, 120, heigh);
                 }
-                int _uint = _maxShow / 16;
+                int _uint = _maxShow / 20;
                 for (int i = start + 1; i < items[id].historys.Count; i++)
                 {
                     double y = top + heigh - StaticTools.GetYaxia(items[id].historys[i].temperature, 120, heigh);
                     double x = xAxie + 2.2;
                     drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                     if ((i-start-1) % _uint == 0)
-                        drawText(cav_chat, items[id].historys[i].time.ToShortTimeString(), x - 10, heigh + 30, 12, 28);
+                        drawText(cav_chat, items[id].historys[i].time.ToShortTimeString(), x - 15, heigh + 30, 12, 28);
                     xAxie = x;
                     yAxie = y;
                 }
@@ -651,50 +647,50 @@ namespace AgriManagement
                     start = 0;
                     yAxie = top + heigh + 240 - StaticTools.GetYaxia(items[id].historys[0].moisture, 120, heigh);
                 }
-                int _uint = _maxShow / 16;
+                int _uint = _maxShow / 20;
                 for (int i = start + 1; i < items[id].historys.Count; i++)
                 {
                     double y = top + heigh + 240 - StaticTools.GetYaxia(items[id].historys[i].moisture, 120, heigh);
                     double x = xAxie + 2.2;
                     drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                     if ((i - start - 1) % _uint == 0)
-                        drawText(cav_chat, items[id].historys[i].time.ToShortTimeString(), x - 10, heigh + 30 + 240, 12, 28);
+                        drawText(cav_chat, items[id].historys[i].time.ToShortTimeString(), x - 15, heigh + 30 + 240, 12, 28);
                     xAxie = x;
                     yAxie = y;
                 }
             }
             #endregion
 
-            #region mos NH
-            if (items[id].historys.Count > 0)
-            {
-                double xAxie = 25;
-                double yAxie = 0;
+            //#region mos NH
+            //if (items[id].historys.Count > 0)
+            //{
+            //    double xAxie = 25;
+            //    double yAxie = 0;
 
-                int start = 0;
-                if (items[id].historys.Count > _maxShow)
-                {
-                    start = items[id].historys.Count - _maxShow;
-                    yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].moisture, 120, heigh);
-                }
-                else
-                {
-                    start = 0;
-                    yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[0].moisture, 120, heigh);
-                }
-                int _uint = _maxShow / 16;
-                for (int i = start + 1; i < items[id].historys.Count; i++)
-                {
-                    double y = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[i].moisture, 120, heigh);
-                    double x = xAxie + 2.2;
-                    drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
-                    if ((i - start - 1) % _uint == 0)
-                        drawText(cav_chat, items[id].historys[i].time.ToShortTimeString(), x - 15, heigh + 30 + 480, 12, 40);
-                    xAxie = x;
-                    yAxie = y;
-                }
-            }
-            #endregion
+            //    int start = 0;
+            //    if (items[id].historys.Count > _maxShow)
+            //    {
+            //        start = items[id].historys.Count - _maxShow;
+            //        yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].moisture, 120, heigh);
+            //    }
+            //    else
+            //    {
+            //        start = 0;
+            //        yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[0].moisture, 120, heigh);
+            //    }
+            //    int _uint = _maxShow / 20;
+            //    for (int i = start + 1; i < items[id].historys.Count; i++)
+            //    {
+            //        double y = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[i].moisture, 120, heigh);
+            //        double x = xAxie + 2.2;
+            //        drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
+            //        if ((i - start - 1) % _uint == 0)
+            //            drawText(cav_chat, items[id].historys[i].time.ToShortTimeString(), x - 15, heigh + 30 + 480, 12, 40);
+            //        xAxie = x;
+            //        yAxie = y;
+            //    }
+            //}
+            //#endregion
         }
         private List<History> GetAveHistory(string area)
         {
@@ -802,7 +798,7 @@ namespace AgriManagement
                         double x = xAxie + 2.2;
                         drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                         if (i % _uint == 0 || i == start + 1)
-                            drawText(cav_history, hs[i].time.ToShortTimeString(), x - 10, top+ heigh + 5, 12, 28);
+                            drawText(cav_history, hs[i].time.ToShortTimeString(), x - 15, top+ heigh + 5, 12, 28);
                         xAxie = x;
                         yAxie = y;
                     }
@@ -825,37 +821,39 @@ namespace AgriManagement
                         double x = xAxie + 2.2;
                         drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                         if (i % _uint == 0 || i == start + 1)
-                            drawText(cav_history, hs[i].time.ToShortTimeString(), x - 10, top+ heigh + 5 + 240, 12, 28);
+                            drawText(cav_history, hs[i].time.ToShortTimeString(), x - 15, top+ heigh + 5 + 240, 12, 28);
                         xAxie = x;
                         yAxie = y;
                     }
                 }
                 #endregion
 
-                #region mos NH
-                if (hs.Count > 0)
-                {
-                    double xAxie = 25;
-                    double yAxie = 0;
+                //#region mos NH
+                //if (hs.Count > 0)
+                //{
+                //    double xAxie = 25;
+                //    double yAxie = 0;
 
-                    int start = 0;
-                    yAxie = top + 480 + heigh - StaticTools.GetYaxia(hs[0].NH, 120, heigh);
+                //    int start = 0;
+                //    yAxie = top + 480 + heigh - StaticTools.GetYaxia(hs[0].NH, 120, heigh);
 
-                    int _uint = 36;
-                    for (int i = start + 1; i < hs.Count; i++)
-                    {
-                        double y = top + 480 + heigh - StaticTools.GetYaxia(hs[i].NH, 120, heigh);
-                        double x = xAxie + 2.2;
-                        drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
-                        if (i % _uint == 0 || i == start + 1)
-                            drawText(cav_history, hs[i].time.ToShortTimeString(), x - 10, top+ heigh + 5 + 480, 12, 28);
-                        xAxie = x;
-                        yAxie = y;
-                    }
-                }
+                //    int _uint = 36;
+                //    for (int i = start + 1; i < hs.Count; i++)
+                //    {
+                //        double y = top + 480 + heigh - StaticTools.GetYaxia(hs[i].NH, 120, heigh);
+                //        double x = xAxie + 2.2;
+                //        drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
+                //        if (i % _uint == 0 || i == start + 1)
+                //            drawText(cav_history, hs[i].time.ToShortTimeString(), x - 15, top + heigh + 5 + 480, 12, 28);
+                //        xAxie = x;
+                //        yAxie = y;
+                //    }
+                //}
+                //#endregion
                 index++;
+                return;
             }
-            #endregion
+
         }
         private void drawLine(Canvas cav, Point sp, Point ep, Brush brush)
         {
@@ -934,8 +932,8 @@ namespace AgriManagement
                 drawRectang(cav, p, width, heigh, string.Format("{0}", "°C"), string.Format("{0}", "温度趋势图（度）"), brush);
                 p = new Point(sp.X, sp.Y + 240);
                 drawRectang(cav, p, width, heigh, string.Format("{0}", "度"), string.Format("{0}", "湿度趋势图（度）"), brush);
-                p = new Point(sp.X, sp.Y + 480);
-                drawRectang(cav, p, width, heigh, string.Format("{0}", "%"), string.Format("{0}", "氨气含量趋势图（%）"), brush);
+                //p = new Point(sp.X, sp.Y + 480);
+                //drawRectang(cav, p, width, heigh, string.Format("{0}", "%"), string.Format("{0}", "氨气含量趋势图（%）"), brush);
             });
         }
         private void drawText(Canvas cav, string data, double x, double y, double FontSize, double width)
@@ -1084,8 +1082,8 @@ namespace AgriManagement
             {
                 int leftoff = 0;
                 int topoff = 20;
-                int width = 200;
-                int heigh = 80;
+                int width = 300;
+                int heigh = 100;
 
                 int count = cav_show.Children.Count;
                 for (int i = 0; i < count; i++)
@@ -1128,13 +1126,14 @@ namespace AgriManagement
                                         tb.Background = Brushes.Gray;
                                     }
 
-                                    tb.Text = string.Format("{0}号设备\n\r 温度：{1}·C 湿度：{2}\n\r 氨气含量：{3}%",
+                                    tb.Text = string.Format("{0}号设备\n\r 温度：{1}·C    湿度：{2}",
                                         items[i].historys[index - 1].id.ToString(),
                                         items[i].historys[index - 1].temperature.ToString(),
                                         items[i].historys[index - 1].moisture.ToString(),
                                         items[i].historys[index - 1].NH.ToString());
                                     tb.Height = heigh;
                                     tb.Width = width;
+                                    tb.FontSize = 20;
 
                                     Thickness th = new Thickness(20 + leftoff, 20 + topoff, 0, 0);
                                     tb.Margin = th;
@@ -1181,7 +1180,6 @@ namespace AgriManagement
         {
             try
             {
-                Console.WriteLine("sending....");
                 if (data == null)
                 {
                     for (int i = 0; i < 2; i++)
@@ -1226,35 +1224,40 @@ namespace AgriManagement
                 else {
                     if (data.Length != 41)
                     {
-                        Console.WriteLine("data length not fit!!!!!!");
+                        Console.WriteLine("data length not fit!!!!!!Length is "+data.Length);
                         return;
                     }
                     int index = 7;
                     int id = 1;
                     for (int i = 7; i < data.Length - 2; i = i + 16)
                     {
+                        int _id = id - 1;
                         double temp = (data[i + 4] * 256 + data[i + 5]) / 10.0;
                         double moist = (data[i + 6] * 256 + data[i + 7]) / 10.0;
                         double NH = (data[i + 8] * 256 + data[i + 9]) / 10.0;
+                        Console.WriteLine("发送中....温度：{0}， 湿度：{1}， 氨气浓度：{2}", temp, moist, NH);
 
                         Status status = checkData(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
-                        items[i.ToString()].historys.Add(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
+                        items[_id.ToString()].historys.Add(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
 
-                        DataGridShow error = new DataGridShow();
-                        error.area = items[i.ToString()].area;
-                        error.id = items[i.ToString()].id;
-                        error.moisture = moist;
-                        error.NH = NH;
-                        error.status = status;
-                        error.temperature = temp;
-                        error.time = DateTime.Now;
-                        errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
+                        if (status == Status.Error)
+                        {
+                            DataGridShow error = new DataGridShow();
+                            error.area = items[_id.ToString()].area;
+                            error.id = items[_id.ToString()].id;
+                            error.moisture = moist;
+                            error.NH = NH;
+                            error.status = status;
+                            error.temperature = temp;
+                            error.time = DateTime.Now;
+                            errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
+                        }
 
                         DataGridShow dgs = new DataGridShow()
                         {
                             status = status,
-                            area = items[i.ToString()].area,
-                            id = items[i.ToString()].id,
+                            area = items[_id.ToString()].area,
+                            id = items[_id.ToString()].id,
                             moisture = moist,
                             NH = NH,
                             temperature = temp,
@@ -1263,11 +1266,11 @@ namespace AgriManagement
                         };
                         _mytestdata.Add(dgs);
                         if (status == Status.Error)
-                            if (!_errorList.ContainsKey(i.ToString()))
+                            if (!_errorList.ContainsKey(_id.ToString()))
                             {
-                                _errorList.Add(i.ToString(), true);
+                                _errorList.Add(_id.ToString(), true);
                             }
-
+                        Console.WriteLine("准备发送到云端！");
                         _cloud.PostMethodMulti(id.ToString(), temp, moist, NH);
                         id++;
                     }
@@ -1809,7 +1812,7 @@ namespace AgriManagement
         {
 
             _device.setPortName(txt_port.Text);
-            _device.connect();
+            Console.WriteLine(_device.connect());
             start();
         }
     }
