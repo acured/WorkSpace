@@ -44,19 +44,6 @@ namespace AgriManagement.tools
             }
         }
 
-        public void sp_DataSender()
-        {
-            if (p.IsOpen)
-            {
-                int length = Cmds.testCmd.Length;
-                p.Write(Cmds.testCmd, 0, length);
-                canRead = false;
-            }
-            else
-            {
-            }
-        }
-
         public void sp_DataSender(byte[] cmd)
         {
             try
@@ -77,7 +64,7 @@ namespace AgriManagement.tools
             }
             catch (Exception ex)
             {
-
+                connect();
             }
         }
 
