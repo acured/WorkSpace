@@ -191,7 +191,7 @@ namespace AgriManagement.tools
 
         public async void PostMethodMulti(string id, double temp, double mosit, double NH)//temp[0]返回网页temp[1]返回cookies
         {
-            String chatUrl = "http://115.29.137.121:8080/api/datacube/upload";
+            String chatUrl = "http://115.29.137.121/api/datacube/upload";
 
             TimeSpan ts1 = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
             string ts = Convert.ToInt64(ts1.TotalSeconds).ToString();
@@ -207,7 +207,7 @@ namespace AgriManagement.tools
                     {
                         byte[] data1 = Encoding.UTF8.GetBytes("kevin");
                         content.Add(new StreamContent(new MemoryStream(data1)), "sign");
-                        byte[] data2 = Encoding.UTF8.GetBytes("121");
+                        byte[] data2 = Encoding.UTF8.GetBytes("0");
                         content.Add(new StreamContent(new MemoryStream(data2)), "businessid");
                         byte[] data3 = Encoding.UTF8.GetBytes(data);
                         content.Add(new StreamContent(new MemoryStream(data3)), "data");
