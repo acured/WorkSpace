@@ -1,0 +1,244 @@
+﻿<Window x:Class="AgriManagement.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AgriManagement"
+        mc:Ignorable="d"
+        Title="监控系统电脑控制端" Height="820" Width="1080" Closed="Window_Closed">
+    <Grid>
+        <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="760" Margin="10,10,0,0" VerticalAlignment="Top" Width="1052">
+            <TabItem Header="实时信息">
+                <Grid Background="#FFE5E5E5">
+                    <TextBox x:Name="txt_port" HorizontalAlignment="Left" Height="23" Margin="874,21,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="71"/>
+                    <Button x:Name="btn_start" Content="启动" HorizontalAlignment="Left" Margin="950,21,0,0" VerticalAlignment="Top" Width="75" Click="btn_start_Click"/>
+                    <ScrollViewer Name="scrollViewer1" VerticalScrollBarVisibility="Auto" Margin="10,0,200,10">
+                        <Canvas Name="cav_show" Width="800" Height="600" HorizontalAlignment="Left" VerticalAlignment="Top" />
+                    </ScrollViewer>
+                    <CheckBox x:Name="cb_1" Content="" HorizontalAlignment="Left" Margin="899,84,0,0" VerticalAlignment="Top" Checked="cb_1_Checked" Unchecked="cb_1_Unchecked"/>
+                    <CheckBox x:Name="cb_2" Content="" HorizontalAlignment="Left" Margin="899,104,0,0" VerticalAlignment="Top" Checked="cb_1_Checked" Unchecked="cb_1_Unchecked"/>
+                    <CheckBox x:Name="cb_3" Content="" HorizontalAlignment="Left" Margin="899,124,0,0" VerticalAlignment="Top" Checked="cb_1_Checked" Unchecked="cb_1_Unchecked"/>
+                    <CheckBox x:Name="cb_4" Content="" HorizontalAlignment="Left" Margin="899,144,0,0" VerticalAlignment="Top" Checked="cb_1_Checked" Unchecked="cb_1_Unchecked"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="趋势展示" Margin="-2,0,-2,-2">
+                <Grid Background="#FFE5E5E5">
+                    <ComboBox x:Name="cmb_areachat" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" SelectionChanged="cmb_areachat_SelectionChanged"/>
+                    <ComboBox x:Name="cmb_nodechat" Margin="150,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" SelectionChanged="cmb_nodechat_SelectionChanged"/>
+                    <Canvas Name="cav_chat" Width="700" Height="740" Grid.ColumnSpan="2" Margin="23,10,23,11" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    </Canvas>
+                    <ScrollViewer Grid.Column="1" Name="scrollViewer3" VerticalScrollBarVisibility="Auto" Margin="880,50,0,0">
+                        <TextBlock Name="txt_error_facility" Panel.ZIndex="99" Width="200" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,0" />
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+            <TabItem Header="历史查询">
+                <Grid Background="#FFE5E5E5">
+                    <ScrollViewer Grid.Column="1" Name="scrollViewer4" VerticalScrollBarVisibility="Auto" Margin="15,10,23,11">
+                        <Canvas Name="cav_history" Width="1020" Height="3000" Grid.ColumnSpan="2" Margin="0,0,0,0"/>
+                    </ScrollViewer>
+                </Grid>
+            </TabItem>
+            <TabItem Header="历史数据">
+                <Grid  HorizontalAlignment="Stretch" Name="grid1" VerticalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="139*"/>
+                        <ColumnDefinition Width="384*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox x:Name="cmb_areatable" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" SelectionChanged="cmb_areatable_SelectionChanged"/>
+                    <ComboBox x:Name="cmb_nodetable" Margin="150,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120"/>
+                    <DataGrid Margin="72,50" AutoGenerateColumns="False" HorizontalAlignment="Center" VerticalAlignment="Stretch" Name="SrollBarDataGrid" IsReadOnly="True" Grid.ColumnSpan="2">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding status}" Value="Error">
+                                        <Setter Property="Background" Value="Red"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding status}" Value="Warning">
+                                        <Setter Property="Background" Value="Yellow"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding isShow}" Value="false">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                            <Style TargetType="{x:Type DataGridCell}">
+                                <Style.Triggers>
+                                    <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#CCDAFF" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="设备ID" Width="100" Binding="{Binding id}"/>
+                            <DataGridTextColumn Header="设备名称" Width="100" Binding="{Binding name}"/>
+                            <DataGridTextColumn Header="网络区域" Width="100" Binding="{Binding area}"/>
+                            <DataGridTextColumn Header="湿度" Width="100" Binding="{Binding moisture}"/>
+                            <DataGridTextColumn Header="氨气浓度" Width="100" Binding="{Binding NH}"/>
+                            <DataGridTextColumn Header="温度" Width="100" Binding="{Binding temperature}"/>
+                            <DataGridTextColumn Header="时间" Width="200" Binding="{Binding time}"/>
+                            <DataGridTextColumn Header="状态" Width="100" Binding="{Binding status}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button x:Name="btn_search" Content="查询" Grid.Column="1" HorizontalAlignment="Left" Margin="36,12,0,0" VerticalAlignment="Top" Width="75" Click="btn_search_Click"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="报警管理">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid Margin="0,50" AutoGenerateColumns="False" HorizontalAlignment="Center" VerticalAlignment="Stretch" Name="errorData" IsReadOnly="True">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding status}" Value="Error">
+                                        <Setter Property="Background" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                            <Style TargetType="{x:Type DataGridCell}">
+                                <Style.Triggers>
+                                    <Trigger Property="DataGridCell.IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#CCDAFF" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Width="100" Binding="{Binding id}"/>
+                            <DataGridTextColumn Header="设备名称" Width="100" Binding="{Binding name}"/>
+                            <DataGridTextColumn Header="网络区域" Width="100" Binding="{Binding area}"/>
+                            <DataGridTextColumn Header="湿度" Width="100" Binding="{Binding moisture}"/>
+                            <DataGridTextColumn Header="氨气浓度" Width="100" Binding="{Binding NH}"/>
+                            <DataGridTextColumn Header="温度" Width="100" Binding="{Binding temperature}"/>
+                            <DataGridTextColumn Header="时间" Width="200" Binding="{Binding time}"/>
+                            <DataGridTextColumn Header="状态" Width="100" Binding="{Binding status}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="设备状态">
+                <Grid Background="#FFE5E5E5">
+                    <TreeView Margin="10,50,0,0" Name="tv_status1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="660">
+                    </TreeView>
+                    <TreeView Margin="232,50,0,0" Name="tv_status2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="660">
+                    </TreeView>
+                    <TreeView Margin="450,50,0,0" Name="tv_status3" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="660">
+                    </TreeView>
+                    <TreeView Margin="670,50,0,0" Name="tv_status4" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="660"/>
+                    <Label x:Name="label" Content="控制端状态：" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <Ellipse Name="ell_moniter" Fill="Blue" HorizontalAlignment="Left" Height="32" Margin="97,7,0,0" Stroke="Black" VerticalAlignment="Top" Width="32"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="账号管理">
+                <Grid Background="#FFE5E5E5">
+                    <Label x:Name="label1" Content="温度（度）：" HorizontalAlignment="Left" Margin="421,10,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label4_Copy" Content="最大值：" HorizontalAlignment="Left" Margin="506,10,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label4_Copy2" Content="最小值：" HorizontalAlignment="Left" Margin="703,10,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label4_Copy9" Content="报警误差±：" HorizontalAlignment="Left" Margin="903,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_temp_max" HorizontalAlignment="Left" Height="23" Margin="569,12,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_temp_min" HorizontalAlignment="Left" Height="23" Margin="769,12,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_temp_deviation" HorizontalAlignment="Left" Height="23" Margin="969,12,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"/>
+                    <Label x:Name="label3" Content="湿度（度）：" HorizontalAlignment="Left" Margin="421,60,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label4_Copy1" Content="最大值：" HorizontalAlignment="Left" Margin="506,60,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label4_Copy3" Content="最小值：" HorizontalAlignment="Left" Margin="703,60,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label4_Copy8" Content="报警误差±：" HorizontalAlignment="Left" Margin="903,60,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_mos_max" HorizontalAlignment="Left" Height="23" Margin="569,62,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_mos_min" HorizontalAlignment="Left" Height="23" Margin="769,62,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_mos_deviation" HorizontalAlignment="Left" Height="23" Margin="969,62,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"/>
+                    <Label x:Name="label5" Content="RH（%）：" HorizontalAlignment="Left" Margin="421,110,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label4_Copy4" Content="最大值：" HorizontalAlignment="Left" Margin="706,110,0,0" VerticalAlignment="Top"/>
+                    <Label Content="最大值：" HorizontalAlignment="Left" Margin="506,110,0,0" VerticalAlignment="Top"/>
+                    <Label Content="报警误差±：" HorizontalAlignment="Left" Margin="903,110,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_RH_max" HorizontalAlignment="Left" Height="23" Margin="569,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_RH_min" HorizontalAlignment="Left" Height="23" Margin="769,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_RH_deviation" HorizontalAlignment="Left" Height="23" Margin="969,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"/>
+                    <Button x:Name="btn_updateSetting" Content="确认" HorizontalAlignment="Left" Margin="428,172,0,0" VerticalAlignment="Top" Width="75" Click="btn_updateSetting_Click"/>
+                    <CheckBox x:Name="cb_play" Content="异常播放音乐" HorizontalAlignment="Left" Margin="552,172,0,0" VerticalAlignment="Top"/>
+
+                    <DataGrid Margin="50,67,0,0" AutoGenerateColumns="False" HorizontalAlignment="Left" VerticalAlignment="Top" Name="userData" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Width="100" Binding="{Binding id}"/>
+                            <DataGridTextColumn Header="名称" Width="100" Binding="{Binding name}"/>
+                            <DataGridTemplateColumn Header="编辑">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Name="btn_edt" Click="btn_edt_Click">编辑</Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="删除">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Name="btn_del" Click="btn_del_Click">删除</Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Button x:Name="btn_adduser" Content="添加用户" HorizontalAlignment="Left" Margin="158,21,0,0" VerticalAlignment="Top" Width="75" Click="btn_adduser_Click"/>
+                    <Button x:Name="btn_showAllUsers" Content="显示全部用户" HorizontalAlignment="Left" Margin="50,20,0,0" VerticalAlignment="Top" Width="75" Click="btn_showAllUsers_Click"/>
+
+
+
+                </Grid>
+            </TabItem>
+            <TabItem Name="app_cmd" Header="调试接口">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="325*"/>
+                        <ColumnDefinition Width="721*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="label9" Content="服务器地址：" HorizontalAlignment="Left" Margin="50,50,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_addr" HorizontalAlignment="Left" Height="23" Margin="150,52,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="250" Grid.ColumnSpan="2"/>
+                    <Label x:Name="label10" Content="上传数据接口：" HorizontalAlignment="Left" Margin="50,100,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_data" HorizontalAlignment="Left" Height="23" Margin="150,102,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="250" Grid.ColumnSpan="2"/>
+                    <Label x:Name="label11" Content="添加人员接口：" HorizontalAlignment="Left" Margin="50,150,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_insert" HorizontalAlignment="Left" Height="23" Margin="150,152,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="250" Grid.ColumnSpan="2"/>
+                    <Label x:Name="label12" Content="修改人员接口：" HorizontalAlignment="Left" Margin="50,200,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_update" HorizontalAlignment="Left" Height="23" Margin="150,202,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="250" Grid.ColumnSpan="2"/>
+                    <Label x:Name="label13" Content="删除人员接口：" HorizontalAlignment="Left" Margin="50,250,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_delete" HorizontalAlignment="Left" Height="23" Margin="150,252,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="250" Grid.ColumnSpan="2"/>
+                    <Label x:Name="label14" Content="登陆接口：" HorizontalAlignment="Left" Margin="50,300,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_login" HorizontalAlignment="Left" Height="23" Margin="150,302,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="250" Grid.ColumnSpan="2"/>
+                    <Button x:Name="btn_commit" Content="更新" HorizontalAlignment="Left" Margin="57,357,0,0" VerticalAlignment="Top" Width="75" Click="btn_commit_Click"/>
+                    <Label x:Name="label15" Content="串口ID：" HorizontalAlignment="Left" Margin="10,438,0,0" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="cob_coms" HorizontalAlignment="Left" Margin="68,441,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="label16" Content="波特率：" HorizontalAlignment="Left" Margin="10,464,0,0" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="cob_port" HorizontalAlignment="Left" Margin="68,467,0,0" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_addarea" HorizontalAlignment="Left" Height="23" Margin="328,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <Button x:Name="btn_addArea" Content="添加网络" HorizontalAlignment="Left" Margin="220,50,0,0" VerticalAlignment="Top" Width="75" Click="btn_addArea_Click" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy" Content="设备ID：" HorizontalAlignment="Left" Margin="220,82,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy1" Content="设备名称：" HorizontalAlignment="Left" Margin="220,113,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy2" Content="选择网络：" HorizontalAlignment="Left" Margin="220,147,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <TextBox x:Name="txt_eqId" HorizontalAlignment="Left" Height="23" Margin="328,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <TextBox x:Name="txt_eqName" HorizontalAlignment="Left" Height="23" Margin="328,116,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <ComboBox x:Name="cmb_eqArea" HorizontalAlignment="Left" Margin="328,150,0,0" VerticalAlignment="Top" Width="110" Grid.Column="1"/>
+                    <Button x:Name="btn_addEq" Content="添加设备" HorizontalAlignment="Left" Margin="220,185,0,0" VerticalAlignment="Top" Width="75" Click="btn_addEq_Click" Grid.Column="1"/>
+                    <Button x:Name="btn_send" Content="测试" HorizontalAlignment="Left" Margin="301,498,0,0" VerticalAlignment="Top" Width="75" Click="btn_send_Click" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="txt_send" HorizontalAlignment="Left" Height="23" Margin="10,495,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="286"/>
+                    <ScrollViewer Name="scrollViewer2" Width="386" VerticalScrollBarVisibility="Auto" Margin="10,523,0,0" HorizontalAlignment="Left" Grid.ColumnSpan="2">
+                        <TextBlock x:Name="txt_recv" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="366" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                    </ScrollViewer>
+                    <TreeView Margin="511,50,0,0" Name="tv_cmd" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="672" Grid.Column="1">
+                    </TreeView>
+                    <Label x:Name="label9_Copy6" Content="频率：" HorizontalAlignment="Left" Margin="220,280,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy3" Content="数据速率：" HorizontalAlignment="Left" Margin="220,313,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy4" Content="RF Power：" HorizontalAlignment="Left" Margin="220,344,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy5" Content="SF：" HorizontalAlignment="Left" Margin="220,375,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy7" Content="BW：" HorizontalAlignment="Left" Margin="220,403,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy8" Content="编码速率：" HorizontalAlignment="Left" Margin="220,434,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <TextBox x:Name="txt_fre" HorizontalAlignment="Left" Height="23" Margin="331,280,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <TextBox x:Name="txt_rate" HorizontalAlignment="Left" Height="23" Margin="331,311,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <TextBox x:Name="txt_RF" HorizontalAlignment="Left" Height="23" Margin="331,342,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <TextBox x:Name="txt_SF" HorizontalAlignment="Left" Height="23" Margin="331,374,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <TextBox x:Name="txt_BW" HorizontalAlignment="Left" Height="23" Margin="330,405,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <TextBox x:Name="txt_enc" HorizontalAlignment="Left" Height="23" Margin="331,436,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
+                    <Button x:Name="btn_read_def" Content="默认" HorizontalAlignment="Left" Margin="148,474,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_def_Click" Grid.Column="1"/>
+                    <Button x:Name="btn_read" Content="读取" HorizontalAlignment="Left" Margin="255,475,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_Click" Grid.Column="1"/>
+                    <Button x:Name="btn_set" Content="设置" HorizontalAlignment="Left" Margin="363,475,0,0" VerticalAlignment="Top" Width="75" Click="btn_set_Click" Grid.Column="1"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Areas>
+  <Area name="牛舍">
+    <node id="0">0</node>
+    <node id="1">1</node>
+  </Area>
+  <Area name="运动场">
+  </Area>
+  <Area name="教室">
+  </Area>
+  <Area name="跑道">
+  </Area>
+</Areas>
