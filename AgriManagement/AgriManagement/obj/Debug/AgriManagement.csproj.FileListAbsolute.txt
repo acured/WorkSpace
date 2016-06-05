@@ -32,3 +32,4 @@ D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\MainWin
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.g.resources
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.Properties.Resources.resources
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.csproj.GenerateResource.Cache
+D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.csprojResolveAssemblyReference.cache
