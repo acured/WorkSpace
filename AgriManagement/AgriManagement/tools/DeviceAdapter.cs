@@ -10,7 +10,7 @@ namespace AgriManagement.tools
     class DeviceAdapter
     {
         SerialPort p;
-        string portName = "COM9";
+        string portName = "COM3";
         int baudRate = 115200;
         Random ran = new Random();
         public bool canRead = false;
@@ -19,7 +19,7 @@ namespace AgriManagement.tools
         {
             this.portName = name;
         }
-        public void connect()
+        public string connect()
         {
             try
             {
@@ -41,7 +41,9 @@ namespace AgriManagement.tools
             }
             catch (System.Exception ex)
             {
+                return "连接失败！";
             }
+            return "连接成功！";
         }
 
         public void sp_DataSender(byte[] cmd)
@@ -60,6 +62,12 @@ namespace AgriManagement.tools
                 }
                 else
                 {
+                    Console.WriteLine("port is close");
+                    p.Open();
+
+                    int length = cmd.Length;
+                    p.Write(cmd, 0, length);
+                    canRead = false;
                 }
             }
             catch (Exception ex)
