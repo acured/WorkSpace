@@ -18,18 +18,3 @@ D:\workspace\Projects\AgriManagement - Copy\AgriManagement\bin\Debug\AgriManagem
 D:\workspace\Projects\AgriManagement - Copy\AgriManagement\obj\Debug\AgriManagement.exe
 D:\workspace\Projects\AgriManagement - Copy\AgriManagement\obj\Debug\AgriManagement.pdb
 D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\bin\Debug\AgriManagement.exe.config
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.exe
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.pdb
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\bin\Debug\AgriManagement.exe
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\bin\Debug\AgriManagement.pdb
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AddUser.g.cs
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\MainWindow.g.cs
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\App.g.cs
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement_MarkupCompile.cache
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement_MarkupCompile.lref
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AddUser.baml
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\MainWindow.baml
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.g.resources
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.Properties.Resources.resources
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.csproj.GenerateResource.Cache
-D:\workspace\soucecode\WorkSpace\AgriManagement\AgriManagement\obj\Debug\AgriManagement.csprojResolveAssemblyReference.cache
