@@ -86,7 +86,7 @@ namespace AgriManagement
 
         Random ran = new Random();
         public MainWindow()
-        {            
+        {
             InitializeComponent();
             InitSensors();
             initUI();
@@ -1159,8 +1159,10 @@ namespace AgriManagement
 
         private void getData()
         {
-            string s = "AAA555000202024521";
-            byte[] cmd = strToToHexByte(s);
+            //string s = "AAA555000202024521";
+            //byte[] cmd = strToToHexByte(s);
+
+            byte[] cmd = Cmds.GetCmd(Cmds.ReadAllNodeData);
 
             _device.sp_DataSender(cmd);
             Thread.Sleep(1500);
@@ -1766,12 +1768,33 @@ namespace AgriManagement
 
         private void btn_read_Click(object sender, RoutedEventArgs e)
         {
-            txt_fre.Text = "99";
-            txt_rate.Text = "99";
-            txt_RF.Text = "99";
-            txt_SF.Text = "99";
-            txt_BW.Text = "99";
-            txt_enc.Text = "99";
+            try
+            {
+                byte[] cmd = Cmds.GetCmd(Cmds.ReadModelSetting);
+
+                _device.sp_DataSender(cmd);
+                Thread.Sleep(1500);
+                byte[] recv = _device.sp_read();
+                if (recv == null)
+                {
+                    MessageBox.Show("未读出设备信息，请检查设备是否正常！");
+                }
+                else
+                {
+                    //txt_recv.Text = "OK";
+                }
+
+                txt_fre.Text = "99";
+                txt_rate.Text = "99";
+                txt_RF.Text = "99";
+                txt_SF.Text = "99";
+                txt_BW.Text = "99";
+                txt_enc.Text = "99";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void btn_set_Click(object sender, RoutedEventArgs e)

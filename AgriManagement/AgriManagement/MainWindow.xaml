@@ -116,7 +116,7 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
-            <TabItem Header="设备状态" Visibility="Hidden">
+            <TabItem Header="设备状态">
                 <Grid Background="#FFE5E5E5">
                     <TreeView Margin="10,50,0,0" Name="tv_status1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="660">
                     </TreeView>
@@ -129,7 +129,7 @@
                     <Ellipse Name="ell_moniter" Fill="Blue" HorizontalAlignment="Left" Height="32" Margin="97,7,0,0" Stroke="Black" VerticalAlignment="Top" Width="32"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="账号管理" Visibility="Hidden">
+            <TabItem Header="账号管理">
                 <Grid Background="#FFE5E5E5">
                     <Label x:Name="label1" Content="温度（度）：" HorizontalAlignment="Left" Margin="421,10,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="label4_Copy" Content="最大值：" HorizontalAlignment="Left" Margin="506,10,0,0" VerticalAlignment="Top"/>
@@ -183,7 +183,7 @@
 
                 </Grid>
             </TabItem>
-            <TabItem Name="app_cmd" Header="调试接口" Visibility="Hidden">
+            <TabItem Name="app_cmd" Header="调试接口">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="325*"/>

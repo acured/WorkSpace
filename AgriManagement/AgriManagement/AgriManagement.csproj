@@ -66,6 +66,7 @@
     <Compile Include="tools\DataGridHelper.cs" />
     <Compile Include="tools\DeviceAdapter.cs" />
     <Compile Include="tools\Item.cs" />
+    <Compile Include="tools\Logs.cs" />
     <Compile Include="tools\StaticTools.cs" />
     <Page Include="AddUser.xaml">
       <SubType>Designer</SubType>

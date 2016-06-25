@@ -33,8 +33,7 @@ namespace AgriManagement.tools
         public static byte[] ReadNodeSum = { 0x01, 0x09, 0x00, 0x00 };//ListLength
         //读取BS端的中某一节点的工作数据
         public static byte[] ReadNodeData = { 0x01, 0x09, 0x00, 0x00 };//Node ID
-        //读取BS端的中所有节点的工作数据
-        public static byte[] ReadAllNodeData = { 0x02, 0x02 };//Node ID//1st Node Work Data Block	2nd Node Work Data Block	… …	Nth Node Work Data Block//Node ID	State	Temperature	Humidity	NH4	Reserved1	Reserv2ed2	Reserved3
+        
         //读取BS端的中某一节点的调试数据
         public static byte[] ReadNodeDataDebug = { 0x02, 0x03, 0x00, 0x00 };//Node ID //Node ID	Node End RSSI	BS End RSSI	Reserved1
         //读取BS端的中所有节点的调试数据
@@ -50,6 +49,20 @@ namespace AgriManagement.tools
 
 
 
+        public static byte[] ReadModelSetting = { 0x00, 0x02 };
+        //读取BS端的中所有节点的工作数据
+        public static byte[] ReadAllNodeData = { 0x00, 0x02, 0x02, 0x02, 0x45, 0x21 };//Node ID//1st Node Work Data Block	2nd Node Work Data Block	… …	Nth Node Work Data Block//Node ID	State	Temperature	Humidity	NH4	Reserved1	Reserv2ed2	Reserved3
+
+
+        public static byte[] GetCmd(byte[] cmd)
+        {
+            byte[] temp = new byte[cmd.Length + 3];
+
+            Buffer.BlockCopy(Head, 0, temp, 0, Head.Length);
+            Buffer.BlockCopy(cmd, 0, temp, Head.Length, cmd.Length);
+
+            return temp;
+        }
 
 
     }
