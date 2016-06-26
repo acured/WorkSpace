@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace AgriManagement.tools
 {
@@ -211,8 +212,6 @@ namespace AgriManagement.tools
                         content.Add(new StreamContent(new MemoryStream(data2)), "businessid");
                         byte[] data3 = Encoding.UTF8.GetBytes(data);
                         content.Add(new StreamContent(new MemoryStream(data3)), "data");
-                        byte[] data4 = Encoding.UTF8.GetBytes("haha");
-                        content.Add(new StreamContent(new MemoryStream(data4)), "haha");
 
                         using (
                            var message =
@@ -231,5 +230,41 @@ namespace AgriManagement.tools
             }
         }
 
+        public async void PostMethodUpdateParam(double Maxt, double Mint, double Maxm, double Minm,double Maxn,double Minn)//temp[0]返回网页temp[1]返回cookies
+        {
+            String chatUrl = "http://115.29.137.121/api/alarm/set";
+
+            string data = "{\"temp\":{\"upper\":" + Maxt + ",\"lower\":" + Mint + "},\"humidity\":{\"upper\":"
+                +Maxm+",\"lower\":"+Minm+"},\"ch3\":{\"upper\":"+Maxn+",\"lower\":"+Minn+"}}";
+            //string json = JsonConvert.SerializeObject(data);
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    using (var content =
+                        new MultipartFormDataContent("Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)))
+                    {
+                        byte[] data1 = Encoding.UTF8.GetBytes("kevin");
+                        content.Add(new StreamContent(new MemoryStream(data1)), "sign");
+                        byte[] data2 = Encoding.UTF8.GetBytes("0");
+                        content.Add(new StreamContent(new MemoryStream(data2)), "businessid");
+                        byte[] data3 = Encoding.UTF8.GetBytes(data);
+                        content.Add(new StreamContent(new MemoryStream(data3)), "data");
+
+                        using (
+                           var message =
+                               await client.PostAsync(chatUrl, content))
+                        {
+                            var input = await message.Content.ReadAsStringAsync();
+                            object o = JsonConvert.DeserializeObject(input);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }

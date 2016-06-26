@@ -1159,10 +1159,10 @@ namespace AgriManagement
 
         private void getData()
         {
-            //string s = "AAA555000202024521";
-            //byte[] cmd = strToToHexByte(s);
+            string s = "AAA555000202024521";
+            byte[] cmd = strToToHexByte(s);
 
-            byte[] cmd = Cmds.GetCmd(Cmds.ReadAllNodeData);
+            //byte[] cmd = Cmds.GetCmd(Cmds.ReadAllNodeData);
 
             _device.sp_DataSender(cmd);
             Thread.Sleep(1500);
@@ -1178,6 +1178,12 @@ namespace AgriManagement
             }
             AnalysisData(recv);
         }
+
+        //temp last status
+        Status lastStatus = Status.Regular;
+        int errorCount = 0;
+        Status lastStatus1 = Status.Regular;
+        int errorCount1 = 0;
         private void AnalysisData(byte[] data)
         {
             try
@@ -1242,8 +1248,10 @@ namespace AgriManagement
                         Status status = checkData(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
                         items[_id.ToString()].historys.Add(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
 
-                        if (status == Status.Error)
+                        if (status == Status.Warning||status == Status.Error)
                         {
+                            errorCount++;
+                            errorCount1++;
                             DataGridShow error = new DataGridShow();
                             error.area = items[_id.ToString()].area;
                             error.id = items[_id.ToString()].id;
@@ -1253,6 +1261,47 @@ namespace AgriManagement
                             error.temperature = temp;
                             error.time = DateTime.Now;
                             errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
+                            if (_id == 1&&errorCount>2)
+                            {
+                                if (lastStatus == Status.Regular)
+                                {
+                                    lastStatus = Status.Warning;
+                                    startFan(2, (_id + 2));
+                                    startFan(2, (_id + 2));
+                                }
+                            }
+                            if (_id == 0 && errorCount1 > 2)
+                            {
+                                if (lastStatus1 == Status.Regular)
+                                {
+                                    lastStatus1 = Status.Warning;
+                                    startFan(2, (_id + 2));
+                                    startFan(2, (_id + 2));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (_id == 1)
+                            {
+                                if (lastStatus == Status.Warning)
+                                {
+                                    lastStatus = Status.Regular;
+                                    stopFan(2, (_id + 2));
+                                    stopFan(2, (_id + 2));
+                                    errorCount = 0;
+                                }
+                            }
+                            if (_id == 0)
+                            {
+                                if (lastStatus1 == Status.Warning)
+                                {
+                                    lastStatus1 = Status.Regular;
+                                    stopFan(2, (_id + 2));
+                                    stopFan(2, (_id + 2));
+                                    errorCount1 = 0;
+                                }
+                            }
                         }
 
                         DataGridShow dgs = new DataGridShow()
@@ -1286,14 +1335,14 @@ namespace AgriManagement
 
         private Status checkData(History item)
         {
-            if (item.temperature > _maxT || item.temperature < _minT) return Status.Error;
-            if (item.moisture > _maxM || item.moisture < _minM) return Status.Error;
-            if (item.NH > _maxN || item.NH < _minN) return Status.Error;
+            if (item.temperature > (_maxT + _DivT) || item.temperature < (_minT - _DivT)) return Status.Error;
+            if (item.moisture > (_maxM + _DivM) || item.moisture < (_minM - _DivM)) return Status.Error;
+            if (item.NH > (_maxN + _DivN) || item.NH < (_minN - _DivN)) return Status.Error;
 
-            if (item.temperature > (_maxT-_DivT) || item.temperature < (_minT+_DivT)) return Status.Warning;
-            if (item.moisture > (_maxM-_DivM) || item.moisture < (_minM+_DivM)) return Status.Warning;
-            if (item.NH > (_maxN-_DivN) || item.NH < (_minN+_DivN)) return Status.Warning;
-
+            if (item.temperature > _maxT || item.temperature < _minT) return Status.Warning;
+            if (item.moisture > _maxM || item.moisture < _minM) return Status.Warning;
+            if (item.NH > _maxN || item.NH < _minN) return Status.Warning;
+            
             return Status.Regular;
         }
 
@@ -1440,6 +1489,8 @@ namespace AgriManagement
                 double divN = Convert.ToDouble(txt_RH_deviation.Text);
                 this._DivN = divN;
                 StaticTools.SaveConfig("DivN", divN.ToString());
+
+                _cloud.PostMethodUpdateParam(_maxT + _DivT, _minT - _DivT, _maxM + _DivM, _minM - _DivM, _maxN + _DivN, _minN - _DivN);
 
                 MessageBox.Show("修改成功！");
             }
@@ -1768,50 +1819,80 @@ namespace AgriManagement
 
         private void btn_read_Click(object sender, RoutedEventArgs e)
         {
+            stopFan(2, 3);
+        }
+
+        private void btn_set_Click(object sender, RoutedEventArgs e)
+        {
+            startFan(2, 3);
+        }
+
+        private void startFan(int group, int member)
+        {
             try
             {
-                byte[] cmd = Cmds.GetCmd(Cmds.ReadModelSetting);
+                byte[] cmd = Cmds.GetCmdStartFanByID(group, member);
 
                 _device.sp_DataSender(cmd);
                 Thread.Sleep(1500);
                 byte[] recv = _device.sp_read();
                 if (recv == null)
                 {
-                    MessageBox.Show("未读出设备信息，请检查设备是否正常！");
+                    Console.WriteLine("未读出设备信息，请检查设备是否正常！");
+                    //MessageBox.Show("未读出设备信息，请检查设备是否正常！");
+                }
+                else if (recv.Length > 7 && recv[7] == 0x80)
+                {
+                    Console.WriteLine("未读出设备信息，请检查设备是否正常！time out!");
+//                    MessageBox.Show("未读出设备信息，请检查设备是否正常！time out!");
                 }
                 else
                 {
-                    //txt_recv.Text = "OK";
+                    string Ref = txt_fre.Text;
+                    string Rate = txt_rate.Text;
+                    string RF = txt_RF.Text;
+                    string SF = txt_SF.Text;
+                    string BW = txt_BW.Text;
+                    string Enc = txt_enc.Text;
+                    MessageBox.Show("操作成功！");
                 }
-
-                txt_fre.Text = "99";
-                txt_rate.Text = "99";
-                txt_RF.Text = "99";
-                txt_SF.Text = "99";
-                txt_BW.Text = "99";
-                txt_enc.Text = "99";
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
             }
         }
-
-        private void btn_set_Click(object sender, RoutedEventArgs e)
+        private void stopFan(int group, int member)
         {
             try
             {
-               string Ref = txt_fre.Text ;
-               string Rate = txt_rate.Text; 
-               string RF = txt_RF.Text  ;
-               string SF = txt_SF.Text  ;
-               string BW = txt_BW.Text  ;
-               string Enc = txt_enc.Text;
-                MessageBox.Show("操作成功！");
+                byte[] cmd = Cmds.GetCmdStopFanByID(group, member);
+
+                _device.sp_DataSender(cmd);
+                Thread.Sleep(1500);
+                byte[] recv = _device.sp_read();
+                if (recv == null)
+                {
+                    //MessageBox.Show("未读出设备信息，请检查设备是否正常！");
+                }
+                else if (recv.Length > 7 && recv[7] == 0x80)
+                {
+                    //MessageBox.Show("未读出设备信息，请检查设备是否正常！time out!");
+                }
+                else
+                {
+                    string Ref = txt_fre.Text;
+                    string Rate = txt_rate.Text;
+                    string RF = txt_RF.Text;
+                    string SF = txt_SF.Text;
+                    string BW = txt_BW.Text;
+                    string Enc = txt_enc.Text;
+                    MessageBox.Show("操作成功！");
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("错误！");
+                //MessageBox.Show(ex.Message);
             }
         }
 
@@ -1833,7 +1914,6 @@ namespace AgriManagement
 
         private void btn_start_Click(object sender, RoutedEventArgs e)
         {
-
             _device.setPortName(txt_port.Text);
             Console.WriteLine(_device.connect());
             start();

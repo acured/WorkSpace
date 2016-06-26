@@ -44,26 +44,51 @@ namespace AgriManagement.tools
         public static byte[] SetNodeRF = { 0x03, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };//Original ID	Freq	SF	BW	CR	Optimize	RF Power
         //通过BS配置节点
         public static byte[] SetConfigNode = { 0x03, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };//Original ID	New ID	Freq	SF	BW	CR	Optimize	RF Power
-        //通过BS配置节点寄存器
-        public static byte[] SetNodeRegister = { 0x03, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };//Node ID	Reg Addr	Length of Byte	Byte1	Byte2	… …	Byte16
-
+        
 
 
         public static byte[] ReadModelSetting = { 0x00, 0x02 };
         //读取BS端的中所有节点的工作数据
         public static byte[] ReadAllNodeData = { 0x00, 0x02, 0x02, 0x02, 0x45, 0x21 };//Node ID//1st Node Work Data Block	2nd Node Work Data Block	… …	Nth Node Work Data Block//Node ID	State	Temperature	Humidity	NH4	Reserved1	Reserv2ed2	Reserved3
+        //通过BS配置节点寄存器
+        public static byte[] SetNodeRegister = { 0x03, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };//Node ID	Reg Addr	Length of Byte	Byte1	Byte2	… …	Byte16
+        //satrt up fan
+        public static byte[] SetFanStart = { 0x00, 0x07, 0x03, 0x04, 0x02, 0x02, 0x40, 0x01, 0x80 };//,0x0E,0x00 };//id : 0202
+        //stop fan
+        public static byte[] SetFanStop = { 0x00, 0x07, 0x03, 0x04, 0x02, 0x02, 0x40, 0x01, 0x00 };//,0x0E,0x00 };//id : 0202
+        public static byte[] GetCmdStartFanByID(int group, int member)
+        {
+            byte g = Convert.ToByte(group);
+            byte m = Convert.ToByte(member);
 
+            byte[] temp = SetFanStart;
+            temp[4] = g;
+            temp[5] = m;
 
+            return (GetCmd(temp));
+        }
+        public static byte[] GetCmdStopFanByID(int group, int member)
+        {
+            byte g = Convert.ToByte(group);
+            byte m = Convert.ToByte(member);
+
+            byte[] temp = SetFanStop;
+            temp[4] = g;
+            temp[5] = m;
+
+            return (GetCmd(temp));
+        }
         public static byte[] GetCmd(byte[] cmd)
         {
-            byte[] temp = new byte[cmd.Length + 3];
+            byte[] temp = new byte[cmd.Length + 5];
+            byte[] check = StaticTools.CheckQueueValide(cmd, cmd.Length);
 
             Buffer.BlockCopy(Head, 0, temp, 0, Head.Length);
             Buffer.BlockCopy(cmd, 0, temp, Head.Length, cmd.Length);
+            Buffer.BlockCopy(check, 0, temp, Head.Length + cmd.Length, check.Length);
+
 
             return temp;
         }
-
-
     }
 }
