@@ -1490,6 +1490,7 @@ namespace AgriManagement
                 this._DivN = divN;
                 StaticTools.SaveConfig("DivN", divN.ToString());
 
+                //_cloud.PostMethodUpdateParam(_maxT, _minT, _maxM, _minM, _maxN, _minN);
                 _cloud.PostMethodUpdateParam(_maxT + _DivT, _minT - _DivT, _maxM + _DivM, _minM - _DivM, _maxN + _DivN, _minN - _DivN);
 
                 MessageBox.Show("修改成功！");
