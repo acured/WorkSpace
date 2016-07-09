@@ -56,7 +56,7 @@ namespace AgriManagement.tools
         public static byte[] SetFanStart = { 0x00, 0x07, 0x03, 0x04, 0x02, 0x02, 0x40, 0x01, 0x80 };//,0x0E,0x00 };//id : 0202
         //stop fan
         public static byte[] SetFanStop = { 0x00, 0x07, 0x03, 0x04, 0x02, 0x02, 0x40, 0x01, 0x00 };//,0x0E,0x00 };//id : 0202
-        public static byte[] GetCmdStartFanByID(int group, int member)
+        public static byte[] cmd_CmdStartFanByID(int group, int member)
         {
             byte g = Convert.ToByte(group);
             byte m = Convert.ToByte(member);
@@ -67,7 +67,7 @@ namespace AgriManagement.tools
 
             return (GetCmd(temp));
         }
-        public static byte[] GetCmdStopFanByID(int group, int member)
+        public static byte[] cmd_CmdStopFanByID(int group, int member)
         {
             byte g = Convert.ToByte(group);
             byte m = Convert.ToByte(member);
@@ -89,6 +89,201 @@ namespace AgriManagement.tools
 
 
             return temp;
+        }
+
+        public static byte[] cmd_SetBS(int fre, int sf, int bw, int cr, int che, int enc)
+        {
+            fre = fre * 10;
+            int h = fre / 10000;
+            int l = fre % 10000;
+            byte hhfre = Convert.ToByte(h / 100);
+            byte hlfre = Convert.ToByte(h % 100);
+            byte lhfre = Convert.ToByte(l / 100);
+            byte llfre = Convert.ToByte(l % 100);
+
+            byte bsf = Convert.ToByte(sf);
+            byte bbw = Convert.ToByte(bw);
+            byte bcr = Convert.ToByte(cr);
+            byte bche = Convert.ToByte(che);
+            byte benc = Convert.ToByte(enc);
+
+            byte[] temp = {0x01,0x03, hhfre, hlfre,lhfre,llfre,bsf,bbw,bcr,bche,benc };
+
+            return (GetCmd(temp));
+        }
+        public static byte[] cmd_ReadBS()
+        {
+            byte[] temp = { 0x01,0x04 };
+
+            return (GetCmd(temp));
+        }
+
+        public static byte[] cmd_ReadNodesCount()
+        {
+            byte[] temp = { 0x01, 0x09 };
+
+            return (GetCmd(temp));
+        }
+        public static byte[] cmd_SetNodesCount(int count)
+        {
+            byte h = Convert.ToByte(count / 100);
+            byte l = Convert.ToByte(count % 100);
+            byte[] temp = { 0x01, 0x05, h, l };
+
+            return (GetCmd(temp));
+        }
+        public static byte[] cmd_AddNodes(List<int> counts)
+        {
+            byte[] temp = { 0x01, 0x06 };
+
+            byte[] count = new byte[counts.Count * 2+2];
+            count[0] = temp[0];
+            count[1] = temp[1];
+            for (int i=0;i<counts.Count;i++)
+            {
+                count[(i+1)*2] = Convert.ToByte(counts[i] / 100);
+                count[(i+1)*2+1] = Convert.ToByte(counts[i] % 100);
+            }
+
+            return (GetCmd(count));
+        }
+        public static byte[] cmd_DeleteNodes(List<int> counts)
+        {
+            byte[] temp = { 0x01, 0x07 };
+
+            byte[] count = new byte[counts.Count * 2 + 2];
+            count[0] = temp[0];
+            count[1] = temp[1];
+            for (int i = 0; i < counts.Count; i++)
+            {
+                count[(i + 1) * 2] = Convert.ToByte(counts[i] / 100);
+                count[(i + 1) * 2 + 1] = Convert.ToByte(counts[i] % 100);
+            }
+
+            return (GetCmd(count));
+        }
+        public static byte[] cmd_ReadAllNodes()
+        {
+            byte[] temp = { 0x01, 0x08 };
+
+            return (GetCmd(temp));
+        }
+
+        public static byte[] cmd_ReadNodeData(int node)
+        {
+            byte[] temp = { 0x02, 0x01,0x00,0x00 };
+
+            temp[2] = Convert.ToByte(node / 100);
+            temp[3] = Convert.ToByte(node % 100);
+
+            return (GetCmd(temp));
+        }
+        public static byte[] cmd_ReadAllNodeData()
+        {
+            byte[] temp = { 0x02, 0x02 };
+
+            return (GetCmd(temp));
+        }
+
+        public static byte[] cmd_ReadNodeDebug(int node)
+        {
+            byte[] temp = { 0x02, 0x03, 0x00, 0x00 };
+
+            temp[2] = Convert.ToByte(node / 100);
+            temp[3] = Convert.ToByte(node % 100);
+
+            return (GetCmd(temp));
+        }
+        public static byte[] cmd_ReadAllNodeDebug()
+        {
+            byte[] temp = { 0x02, 0x04 };
+
+            return (GetCmd(temp));
+        }
+        public static byte[] cmd_UpdateNodeID(int oldid,int newid)
+        {
+            byte[] temp = { 0x03, 0x01, 0x00, 0x00,0x00,0x00 };
+
+            temp[2] = Convert.ToByte(oldid / 100);
+            temp[3] = Convert.ToByte(oldid % 100);
+            temp[4] = Convert.ToByte(newid / 100);
+            temp[5] = Convert.ToByte(newid % 100);
+
+            return (GetCmd(temp));
+        }
+        public static byte[] cmd_SetNodeBS(int node, int fre, int sf, int bw, int cr, int che, int enc)
+        {
+            byte hid = Convert.ToByte(node / 100);
+            byte lid = Convert.ToByte(node % 100);
+            fre = fre * 10;
+            int h = fre / 10000;
+            int l = fre % 10000;
+            byte hhfre = Convert.ToByte(h / 100);
+            byte hlfre = Convert.ToByte(h % 100);
+            byte lhfre = Convert.ToByte(l / 100);
+            byte llfre = Convert.ToByte(l % 100);
+
+            byte bsf = Convert.ToByte(sf);
+            byte bbw = Convert.ToByte(bw);
+            byte bcr = Convert.ToByte(cr);
+            byte bche = Convert.ToByte(che);
+            byte benc = Convert.ToByte(enc);
+
+            byte[] temp = { 0x03, 0x02, hid, lid, hhfre, hlfre, lhfre, llfre, bsf, bbw, bcr, bche, benc };
+
+            return (GetCmd(temp));
+        }
+        public static byte[] cmd_SetNodeBS(int oldid,int newid, int fre, int sf, int bw, int cr, int che, int enc)
+        {
+            byte ohid = Convert.ToByte(oldid / 100);
+            byte olid = Convert.ToByte(oldid % 100);
+            byte nhid = Convert.ToByte(newid / 100);
+            byte nlid = Convert.ToByte(newid % 100);
+            fre = fre * 10;
+            int h = fre / 10000;
+            int l = fre % 10000;
+            byte hhfre = Convert.ToByte(h / 100);
+            byte hlfre = Convert.ToByte(h % 100);
+            byte lhfre = Convert.ToByte(l / 100);
+            byte llfre = Convert.ToByte(l % 100);
+
+            byte bsf = Convert.ToByte(sf);
+            byte bbw = Convert.ToByte(bw);
+            byte bcr = Convert.ToByte(cr);
+            byte bche = Convert.ToByte(che);
+            byte benc = Convert.ToByte(enc);
+
+            byte[] temp = { 0x03, 0x03, ohid, olid,nhid,nlid, hhfre, hlfre, lhfre, llfre, bsf, bbw, bcr, bche, benc };
+
+            return (GetCmd(temp));
+        }
+
+        public static byte[] cmd_SetNodeRom(int id,int addr,List<byte> datas)
+        {
+            byte[] temp = { 0x03, 0x04 };
+            byte hid = Convert.ToByte(id / 100);
+            byte lid = Convert.ToByte(id % 100);
+
+            byte[] count = new byte[datas.Count + 6];
+            count[0] = temp[0];
+            count[1] = temp[1];
+            count[2] = hid;
+            count[3] = lid;
+            count[4] = Convert.ToByte(addr);
+            count[5] = Convert.ToByte(datas.Count);
+
+            for (int i = 0; i < datas.Count; i++)
+            {
+                count[i+6] = datas[i];
+            }
+
+            return (GetCmd(count));
+        }
+        public static byte[] cmd_Bit()
+        {
+            byte[] temp = { 0x00, 0x00 };
+
+            return (GetCmd(temp));
         }
     }
 }

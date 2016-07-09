@@ -205,6 +205,8 @@ namespace AgriManagement.tools
 
         public static void AddNode(string areaname,string nodeid,string nodename)
         {
+            if (!checkArea(areaname))
+                AddArea(areaname);
             List<string> strs = new List<string>();
 
             XmlDocument doc = new XmlDocument();
@@ -228,6 +230,27 @@ namespace AgriManagement.tools
             //保存上面的修改
             doc.Save(strFileName);
         }
+
+        static bool checkArea(string area)
+        {
+            XmlDocument doc = new XmlDocument();
+            string strFileName = AppDomain.CurrentDomain.BaseDirectory.ToString() + "config.xml";
+            doc.Load(strFileName);
+
+            XmlNodeList nodes = doc.GetElementsByTagName("Area");
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                //获得将当前元素的key属性
+                string name = nodes[i].Attributes[0].Value;
+                if (name == area)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
 
         public static bool checkNode(string areaname, string nodeid)
         {

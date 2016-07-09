@@ -69,6 +69,7 @@ namespace AgriManagement
 
         DeviceAdapter _device = new DeviceAdapter();
         CloudAdapter _cloud = new CloudAdapter();
+        DeviceBill _bill;
 
         int sensorCount = 2;
         int _maxHistorys = 8640;//one days
@@ -206,6 +207,32 @@ namespace AgriManagement
             else cb_play.IsChecked = false;
             #endregion
 
+            txt_SF.Items.Add("6");
+            txt_SF.Items.Add("7");
+            txt_SF.Items.Add("8");
+            txt_SF.Items.Add("9");
+            txt_SF.Items.Add("10");
+            txt_SF.Items.Add("11");
+            txt_SF.Items.Add("12");
+            txt_SF.SelectedIndex = 0;
+
+            txt_BW.Items.Add("7.80");
+            txt_BW.Items.Add("10.4");
+            txt_BW.Items.Add("15.6");
+            txt_BW.Items.Add("20.8");
+            txt_BW.Items.Add("31.2");
+            txt_BW.Items.Add("41.6");
+            txt_BW.Items.Add("62.5");
+            txt_BW.Items.Add("125");
+            txt_BW.Items.Add("250");
+            txt_BW.Items.Add("500");
+            txt_BW.SelectedIndex = 0;
+
+            txt_rate.Items.Add("1");
+            txt_rate.Items.Add("2");
+            txt_rate.Items.Add("3");
+            txt_rate.Items.Add("4");
+            txt_rate.SelectedIndex = 0;
 
             foreach (string s in areaList)
             {
@@ -1810,29 +1837,168 @@ namespace AgriManagement
 
         private void btn_read_def_Click(object sender, RoutedEventArgs e)
         {
-            txt_fre.Text ="100";
-            txt_rate.Text = "100";
-            txt_RF.Text = "100";
-            txt_SF.Text = "100";
-            txt_BW.Text = "100";
-            txt_enc.Text = "100";
+            List<int> data = new List<int>();
+            List<double[]> data1 = new List<double[]>();
+            List<int> data2 = new List<int>();
+            int data3 = 0;
+            double[] data4;
+            data.Add(0101);
+            data.Add(0102);
+            int id = 0101;
+            int id1 = 0102;
+            bool result = false;
+
+            int freq = 10;
+            int sf = 10;
+            int bw = 10;
+            int cr = 10;
+            int opt = 1;
+            int rf = 10;
+
+            int len = 10;
+            int addr = 10;
+
+            List<byte> ds = new List<byte>();
+            ds.Add(0x00);
+            ds.Add(0x01);
+
+
+            result = _bill.AddBSList(data);
+            result = _bill.Check();
+            result = _bill.DeleteBSList(data);
+            data1 = _bill.getAllNodeData();
+            data1 = _bill.getAllNodeDebug();
+            data2 = _bill.getBS();
+            data3 = _bill.getBSLength();
+            data2 = _bill.getBSList();
+            data4 = _bill.getNodeData(id);
+            data4 = _bill.getNodeDebug(id);
+            result = _bill.UpdateNodeId(id, id1);
+            result = _bill.setBSLength(len);
+            result = _bill.setBS(freq, sf, bw, cr, opt, rf);
+            result = _bill.setBSToNode(id, freq, sf, bw, cr, opt, rf);
+            result = _bill.setBSToNode(id, id1, freq, sf, bw, cr, opt, rf);
+            result = _bill.setNodeRom(id, addr, ds);
         }
 
         private void btn_read_Click(object sender, RoutedEventArgs e)
         {
-            stopFan(2, 3);
+            List<int> data = _bill.getBS();
+
+            if (data == null)
+            {
+                MessageBox.Show("未读出设备信息，请检查设备是否正常！");
+            }
+            else
+            {
+                try
+                {
+                    int freq = data[0];
+                    int bw = data[1];
+                    int sf = data[2];
+                    int rc = data[3];
+                    int check = data[4];
+                    int enc = data[5];
+                    txt_fre.Text = freq.ToString();
+                    txt_SF.SelectedValue = sf.ToString();
+                    txt_BW.SelectedValue = bw.ToString();
+                    txt_rate.SelectedValue = rc.ToString();
+                    txt_uhua.IsChecked = (check == 1);
+                    txt_enc.Text = enc.ToString();
+                }
+                catch
+                {
+                    MessageBox.Show("数据初始化失败！");
+                }
+            }
         }
 
         private void btn_set_Click(object sender, RoutedEventArgs e)
         {
-            startFan(2, 3);
+            int freq = 10;
+            int bw = 6;
+            int sf = 1;
+            int rc = 0;
+            int check = 0;
+            int enc = -1;
+            try
+            {
+                freq = Convert.ToInt32(txt_fre.Text);
+            }
+            catch
+            {
+                MessageBox.Show("中心频点输入有误（10~10000）");
+                return;
+            }
+            freq = freq > 10000 ? 10000 : freq;
+            freq = freq < 10 ? 10 : freq;
+
+            sf = Convert.ToInt32(txt_SF.SelectedValue.ToString());
+
+            bw = getBW(txt_SF.SelectedValue.ToString());
+
+            rc = Convert.ToInt32(txt_rate.SelectedValue.ToString());
+
+            check = txt_uhua.IsChecked==true ? 1 : 0;
+
+            try
+            {
+                enc = Convert.ToInt32(txt_enc.Text);
+            }
+            catch
+            {
+                MessageBox.Show("射频功率输入有误（-1~20）");
+                return;
+            }
+            enc = enc > 20 ? 20 : enc;
+            enc = enc < -1 ? -1 : enc;
+
+            if (_bill.setBS(freq, sf, bw, rc, check, enc))
+                return;
+            else
+                MessageBox.Show("未读出设备信息，请检查设备是否正常！");
+        }
+
+        private int getBW(string index)
+        {
+            switch (index)
+            {
+                case "7.8": return 0;
+                case "10.4": return 1;
+                case "15.6": return 2;
+                case "20.8": return 3;
+                case "31.2": return 4;
+                case "41.6": return 5;
+                case "62.5": return 6;
+                case "125": return 7;
+                case "250": return 8;
+                case "500": return 9;
+                default: return 0;
+            }
+        }
+        private string getBWShow(string index)
+        {
+            switch (index)
+            {
+                case "0": return "7.8";
+                case "1": return "10.4";
+                case "2": return "15.6";
+                case "3": return "20.8";
+                case "4": return "31.2";
+                case "5": return "41.6";
+                case "6": return "62.5";
+                case "7": return "125";
+                case "8": return "250";
+                case "9": return "500";
+                default: return "7.8";
+            }
         }
 
         private void startFan(int group, int member)
         {
             try
             {
-                byte[] cmd = Cmds.GetCmdStartFanByID(group, member);
+                byte[] cmd = Cmds.cmd_CmdStartFanByID(group, member);
 
                 _device.sp_DataSender(cmd);
                 Thread.Sleep(1500);
@@ -1851,7 +2017,7 @@ namespace AgriManagement
                 {
                     string Ref = txt_fre.Text;
                     string Rate = txt_rate.Text;
-                    string RF = txt_RF.Text;
+                    //string RF = txt_RF.Text;
                     string SF = txt_SF.Text;
                     string BW = txt_BW.Text;
                     string Enc = txt_enc.Text;
@@ -1867,7 +2033,7 @@ namespace AgriManagement
         {
             try
             {
-                byte[] cmd = Cmds.GetCmdStopFanByID(group, member);
+                byte[] cmd = Cmds.cmd_CmdStopFanByID(group, member);
 
                 _device.sp_DataSender(cmd);
                 Thread.Sleep(1500);
@@ -1884,7 +2050,7 @@ namespace AgriManagement
                 {
                     string Ref = txt_fre.Text;
                     string Rate = txt_rate.Text;
-                    string RF = txt_RF.Text;
+                    //string RF = txt_RF.Text;
                     string SF = txt_SF.Text;
                     string BW = txt_BW.Text;
                     string Enc = txt_enc.Text;
@@ -1917,7 +2083,17 @@ namespace AgriManagement
         {
             _device.setPortName(txt_port.Text);
             Console.WriteLine(_device.connect());
-            start();
+            _bill = new DeviceBill(_device);
+            //start();
+        }
+
+        private byte[] Read(byte[] cmds)
+        {
+            _device.sp_DataSender(cmds);
+            Thread.Sleep(1000);
+            byte[] recv = _device.sp_read();
+
+            return recv;
         }
     }
 }

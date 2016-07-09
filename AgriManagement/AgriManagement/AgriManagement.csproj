@@ -66,6 +66,7 @@
     <Compile Include="tools\Config.cs" />
     <Compile Include="tools\DataGridHelper.cs" />
     <Compile Include="tools\DeviceAdapter.cs" />
+    <Compile Include="tools\DeviceBill.cs" />
     <Compile Include="tools\Item.cs" />
     <Compile Include="tools\Logs.cs" />
     <Compile Include="tools\StaticTools.cs" />
@@ -116,7 +117,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="config.xml" />
+    <Resource Include="config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
