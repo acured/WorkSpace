@@ -1,13 +1,3 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Areas>
-  <Area name="牛舍">
-    <node id="1">
-      1
-    </node>
-  </Area>
-  <Area name="运动场">
-    <node id="2">
-      2
-    </node>
-  </Area>
 </Areas>

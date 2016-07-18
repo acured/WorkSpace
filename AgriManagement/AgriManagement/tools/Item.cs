@@ -16,6 +16,8 @@ namespace AgriManagement.tools
         public List<History> historys { get; set; }
         public Status status { get; set; }
         public int RetryCount { get; set; }
+        public int ErrorCount { get; set; }
+        public Status lastStatus { get; set; }
     }
     public class History
     {

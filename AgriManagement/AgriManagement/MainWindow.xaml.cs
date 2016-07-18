@@ -50,7 +50,7 @@ namespace AgriManagement
 
         //double _freq_data = Config.freq_data;
         //double _freq_chat = Config.freq_chat;
-        double _freq_data = 0.5;
+        double _freq_data = 2;
         double _freq_chat = 4;
 
         double _retry = Config.retry;
@@ -89,14 +89,19 @@ namespace AgriManagement
         public MainWindow()
         {
             InitializeComponent();
+
+            string msg = _device.connect();
+            Console.WriteLine(msg);
+            _bill = new DeviceBill(_device);
+
+
             InitSensors();
             initUI();
-            updateFacilityStatus();
 
-            //errorData.ItemsSource = _errors;
-            //errorData.Dispatcher.Invoke(() => { errorData.ItemsSource = _errors; });
-            //errorData.ItemsSource = _errors;
-            //app_cmd.Visibility = Visibility.Hidden;
+
+            start();
+
+
         }
 
         private void testInitData()
@@ -166,33 +171,33 @@ namespace AgriManagement
             txt_update.Text = _i_updateUser;
             #endregion
 
-            #region serial port
-            //列出常用的波特率
-            cob_port.Items.Add("9600");
-            cob_port.Items.Add("19200");
-            cob_port.Items.Add("56000");
-            cob_port.Items.Add("115200");
-            cob_port.SelectedIndex = StaticTools.getPortindex(port);
+            //#region serial port
+            ////列出常用的波特率
+            ////cob_port.Items.Add("9600");
+            ////cob_port.Items.Add("19200");
+            ////cob_port.Items.Add("56000");
+            ////cob_port.Items.Add("115200");
+            ////cob_port.SelectedIndex = StaticTools.getPortindex(port);
 
 
-            for (int i = 0; i < 25; i++)
-            {
-                try
-                {
-                    SerialPort sp = new SerialPort("COM" + (i + 1).ToString());
-                    sp.Open();
-                    sp.Close();
-                    cob_coms.Items.Add("COM" + (i + 1).ToString());
-                    _device.setPortName("COM" + (i + 1).ToString());
-                }
-                catch (System.Exception ex)
-                {
-                    continue;
-                }
-            }
-            if (cob_coms.Items.Count > 0)
-                cob_coms.SelectedIndex = 0;
-            #endregion
+            ////for (int i = 0; i < 25; i++)
+            ////{
+            ////    try
+            ////    {
+            ////        SerialPort sp = new SerialPort("COM" + (i + 1).ToString());
+            ////        sp.Open();
+            ////        sp.Close();
+            ////        cob_coms.Items.Add("COM" + (i + 1).ToString());
+            ////        _device.setPortName("COM" + (i + 1).ToString());
+            ////    }
+            ////    catch (System.Exception ex)
+            ////    {
+            ////        continue;
+            ////    }
+            ////}
+            ////if (cob_coms.Items.Count > 0)
+            ////    cob_coms.SelectedIndex = 0;
+            //#endregion
 
             #region init history Page
             List<string> areaList = StaticTools.GetAllArea();
@@ -241,242 +246,388 @@ namespace AgriManagement
 
                 _checkShow.Add(s, false);
             }
-            _AreaChat = cmb_areachat.Items[0].ToString();
+            if (cmb_areachat.Items.Count>0)
+                _AreaChat = cmb_areachat.Items[0].ToString();
 
             cmb_areachat.SelectedIndex = 0;
             cmb_areatable.SelectedIndex = 0;
 
+            if (areaList.Count > 0)
+            {
+                try
+                {
+                    if (areaList.Count == 1)
+                    {
+                        cb_1.Content = areaList[0];
+                        cb_1.IsChecked = true;
 
-            cb_1.Content = areaList[0];
-            cb_1.IsChecked = true;
+                        cb_2.Visibility = Visibility.Hidden;
+                        cb_3.Visibility = Visibility.Hidden;
+                        cb_4.Visibility = Visibility.Hidden;
+                    }
+                    else if (areaList.Count == 2)
+                    {
+                        cb_1.Content = areaList[0];
+                        cb_1.IsChecked = true;
 
-            cb_2.Content = areaList[1];
-            cb_2.IsChecked = false;
+                        cb_2.Content = areaList[1];
+                        cb_2.IsChecked = false;
 
-            cb_3.Content = areaList[2];
-            cb_3.IsChecked = false;
+                        cb_3.Visibility = Visibility.Hidden;
+                        cb_4.Visibility = Visibility.Hidden;
+                    }
+                    else if (areaList.Count == 3)
+                    {
+                        cb_1.Content = areaList[0];
+                        cb_1.IsChecked = true;
 
-            cb_4.Content = areaList[3];
-            cb_4.IsChecked = false;
+                        cb_2.Content = areaList[1];
+                        cb_2.IsChecked = false;
+
+                        cb_3.Content = areaList[2];
+                        cb_3.IsChecked = false;
+
+                        cb_4.Visibility = Visibility.Hidden;
+                    }
+                    else if (areaList.Count == 4)
+                    {
+                        cb_1.Content = areaList[0];
+                        cb_1.IsChecked = true;
+
+                        cb_2.Content = areaList[1];
+                        cb_2.IsChecked = false;
+
+                        cb_3.Content = areaList[2];
+                        cb_3.IsChecked = false;
+
+                        cb_4.Content = areaList[3];
+                        cb_4.IsChecked = false;
+                    }
+                }
+                catch { };
+            }
 
             update_cmd();
         }
 
         private void updateFacilityStatus()
         {
-            tv_status1.Items.Clear();
-            tv_status2.Items.Clear();
-            tv_status3.Items.Clear();
-            tv_status4.Items.Clear();
-
-            ell_moniter.Fill = Brushes.Red;
-
-            List<string> areaList = StaticTools.GetAllArea();
-
-            TreeViewItem newChild = new TreeViewItem();
-            newChild.Header = areaList[0] + "网络";
-
-            StackPanel sp1 = new StackPanel();
-            sp1.Orientation = Orientation.Horizontal;
-            sp1.Height = 40;
-
-            TreeViewItem newChildnode1 = new TreeViewItem();
-            newChildnode1.Header = "工控端：";
-            newChildnode1.VerticalAlignment = VerticalAlignment.Center;
-            Ellipse blueRectangle1 = new Ellipse();
-            blueRectangle1.Height = 15;
-            blueRectangle1.Width = 15;
-
-            SolidColorBrush blueBrush1 = new SolidColorBrush();
-            blueBrush1.Color = Colors.Blue;
-            blueRectangle1.StrokeThickness = 1;
-            blueRectangle1.Stroke = blueBrush1;
-            blueRectangle1.Fill = blueBrush1;
-
-            sp1.Children.Add(newChildnode1);
-            sp1.Children.Add(blueRectangle1);
-            newChild.Items.Add(sp1);
-
-            List<string> nodelist = new List<string>();
-            nodelist = StaticTools.GetAllNodesByArea(areaList[0]);
-            foreach (string s1 in nodelist)
+            try
             {
-                StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
-                sp.Height = 40;
+                if (tv_status1.Items.Count > 0)
+                    tv_status1.Dispatcher.Invoke(() => { tv_status1.Items.Clear(); });
+                if (tv_status2.Items.Count > 0)
+                    tv_status2.Dispatcher.Invoke(() => { tv_status2.Items.Clear(); });
+                if (tv_status3.Items.Count > 0)
+                    tv_status3.Dispatcher.Invoke(() => { tv_status3.Items.Clear(); });
+                if (tv_status4.Items.Count > 0)
+                    tv_status4.Dispatcher.Invoke(() => { tv_status4.Items.Clear(); });
 
-                TreeViewItem newChildnode = new TreeViewItem();
-                newChildnode.Header = "编号：" + s1 + " 状态：";
-                newChildnode.VerticalAlignment = VerticalAlignment.Center;
-                Ellipse blueRectangle = new Ellipse();
-                blueRectangle.Height = 15;
-                blueRectangle.Width = 15;
+                //ell_moniter.Fill = Brushes.Red;
 
-                SolidColorBrush blueBrush = new SolidColorBrush();
-                blueBrush.Color = Colors.Blue;
-                blueRectangle.StrokeThickness = 1;
-                blueRectangle.Stroke = blueBrush;
-                blueRectangle.Fill = blueBrush;
-                                
-                sp.Children.Add(newChildnode);
-                sp.Children.Add(blueRectangle);
-                newChild.Items.Add(sp);
+                List<string> areaList = StaticTools.GetAllArea();
+                int index = 1;
+                if (areaList.Count > 0)
+                {
+                    foreach (string area in areaList)
+                    {
+                        status_show.Dispatcher.Invoke(() => {
+                        TreeViewItem newChild = new TreeViewItem();
+                        newChild.Header = area + "网络";
+
+                        StackPanel sp1 = new StackPanel();
+                        sp1.Orientation = Orientation.Horizontal;
+                        sp1.Height = 40;
+
+                        TreeViewItem newChildnode1 = new TreeViewItem();
+                        newChildnode1.Header = "工控端：";
+                        newChildnode1.VerticalAlignment = VerticalAlignment.Center;
+                        Ellipse blueRectangle1 = new Ellipse();
+                        blueRectangle1.Height = 15;
+                        blueRectangle1.Width = 15;
+
+                        SolidColorBrush blueBrush1 = new SolidColorBrush();
+                            foreach (string key in items.Keys)
+                            {
+                                if (items[key].area == area)
+                                {
+                                    if (items[key].status == Status.OffLine)
+                                        blueBrush1.Color = Colors.Gray;
+                                    else
+                                        blueBrush1.Color = Colors.Blue;
+                                }
+                            }
+                        blueRectangle1.StrokeThickness = 1;
+                        blueRectangle1.Stroke = blueBrush1;
+                        blueRectangle1.Fill = blueBrush1;
+
+                        sp1.Children.Add(newChildnode1);
+                        sp1.Children.Add(blueRectangle1);
+                        newChild.Items.Add(sp1);
+
+                        foreach (string key in items.Keys)
+                        {
+                            if (items[key].area == area)
+                            {
+                                StackPanel sp = new StackPanel();
+                                sp.Orientation = Orientation.Horizontal;
+                                sp.Height = 40;
+
+                                TreeViewItem newChildnode = new TreeViewItem();
+                                newChildnode.Header = "编号：" + items[key].name + " 状态：";
+                                newChildnode.VerticalAlignment = VerticalAlignment.Center;
+                                Ellipse blueRectangle = new Ellipse();
+                                blueRectangle.Height = 15;
+                                blueRectangle.Width = 15;
+
+                                SolidColorBrush blueBrush = new SolidColorBrush();
+
+                                if (items[key].status==Status.Regular|| items[key].status == Status.OnLine|| items[key].status == Status.Warning)
+                                    blueBrush.Color = Colors.Blue;
+                                else if(items[key].status == Status.OffLine || items[key].status == Status.Error)
+                                    blueBrush.Color = Colors.Red;
+                                blueRectangle.StrokeThickness = 1;
+                                blueRectangle.Stroke = blueBrush;
+                                blueRectangle.Fill = blueBrush;
+
+                                sp.Children.Add(newChildnode);
+                                sp.Children.Add(blueRectangle);
+                                newChild.Items.Add(sp);
+                            }
+                        }
+                        if (index == 1)
+                        {
+                            tv_status1.Items.Add(newChild);
+                            ExpandInternal(tv_status1);
+                        }
+                        else if (index == 2)
+                        {
+                            tv_status2.Items.Add(newChild);
+                            ExpandInternal(tv_status2);
+                        }
+                        else if (index == 3)
+                        {
+                            tv_status3.Items.Add(newChild);
+                            ExpandInternal(tv_status3);
+                        }
+                        else
+                        {
+                            tv_status4.Items.Add(newChild);
+                            ExpandInternal(tv_status4);
+                        }
+                        index++;
+                        });
+                    }
+                    //TreeViewItem newChild = new TreeViewItem();
+                    //newChild.Header = areaList[0] + "网络";
+
+                    //StackPanel sp1 = new StackPanel();
+                    //sp1.Orientation = Orientation.Horizontal;
+                    //sp1.Height = 40;
+
+                    //TreeViewItem newChildnode1 = new TreeViewItem();
+                    //newChildnode1.Header = "工控端：";
+                    //newChildnode1.VerticalAlignment = VerticalAlignment.Center;
+                    //Ellipse blueRectangle1 = new Ellipse();
+                    //blueRectangle1.Height = 15;
+                    //blueRectangle1.Width = 15;
+
+                    //SolidColorBrush blueBrush1 = new SolidColorBrush();
+                    //blueBrush1.Color = Colors.Blue;
+                    //blueRectangle1.StrokeThickness = 1;
+                    //blueRectangle1.Stroke = blueBrush1;
+                    //blueRectangle1.Fill = blueBrush1;
+
+                    //sp1.Children.Add(newChildnode1);
+                    //sp1.Children.Add(blueRectangle1);
+                    //newChild.Items.Add(sp1);
+
+                    //List<string> nodelist = new List<string>();
+                    //nodelist = StaticTools.GetAllNodesByArea(areaList[0]);
+                    //foreach (string s1 in nodelist)
+                    //{
+                    //    StackPanel sp = new StackPanel();
+                    //    sp.Orientation = Orientation.Horizontal;
+                    //    sp.Height = 40;
+
+                    //    TreeViewItem newChildnode = new TreeViewItem();
+                    //    newChildnode.Header = "编号：" + s1 + " 状态：";
+                    //    newChildnode.VerticalAlignment = VerticalAlignment.Center;
+                    //    Ellipse blueRectangle = new Ellipse();
+                    //    blueRectangle.Height = 15;
+                    //    blueRectangle.Width = 15;
+
+                    //    SolidColorBrush blueBrush = new SolidColorBrush();
+                    //    blueBrush.Color = Colors.Blue;
+                    //    blueRectangle.StrokeThickness = 1;
+                    //    blueRectangle.Stroke = blueBrush;
+                    //    blueRectangle.Fill = blueBrush;
+
+                    //    sp.Children.Add(newChildnode);
+                    //    sp.Children.Add(blueRectangle);
+                    //    newChild.Items.Add(sp);
+                    //}
+                    //tv_status1.Items.Add(newChild);
+                    //ExpandInternal(tv_status1);
+
+                    //newChild = new TreeViewItem();
+                    //newChild.Header = areaList[1] + "网络";
+
+                    //sp1 = new StackPanel();
+                    //sp1.Orientation = Orientation.Horizontal;
+                    //sp1.Height = 40;
+
+                    //newChildnode1 = new TreeViewItem();
+                    //newChildnode1.Header = "工控端：";
+                    //newChildnode1.VerticalAlignment = VerticalAlignment.Center;
+                    //blueRectangle1 = new Ellipse();
+                    //blueRectangle1.Height = 15;
+                    //blueRectangle1.Width = 15;
+
+                    //blueBrush1 = new SolidColorBrush();
+                    //blueBrush1.Color = Colors.Blue;
+                    //blueRectangle1.StrokeThickness = 1;
+                    //blueRectangle1.Stroke = blueBrush1;
+                    //blueRectangle1.Fill = blueBrush1;
+
+                    //sp1.Children.Add(newChildnode1);
+                    //sp1.Children.Add(blueRectangle1);
+                    //newChild.Items.Add(sp1);
+
+                    //nodelist = new List<string>();
+                    //nodelist = StaticTools.GetAllNodesByArea(areaList[1]);
+                    //foreach (string s1 in nodelist)
+                    //{
+                    //    StackPanel sp = new StackPanel();
+                    //    sp.Orientation = Orientation.Horizontal;
+                    //    sp.Height = 40;
+
+                    //    TreeViewItem newChildnode = new TreeViewItem();
+                    //    newChildnode.Header = "编号：" + s1 + " 状态：";
+                    //    newChildnode.VerticalAlignment = VerticalAlignment.Center;
+                    //    Ellipse blueRectangle = new Ellipse();
+                    //    blueRectangle.Height = 15;
+                    //    blueRectangle.Width = 15;
+                    //    SolidColorBrush blueBrush = new SolidColorBrush();
+                    //    blueBrush.Color = Colors.Blue;
+                    //    blueRectangle.StrokeThickness = 1;
+                    //    blueRectangle.Stroke = blueBrush;
+                    //    blueRectangle.Fill = blueBrush;
+
+                    //    sp.Children.Add(newChildnode);
+                    //    sp.Children.Add(blueRectangle);
+                    //    newChild.Items.Add(sp);
+                    //}
+                    //tv_status2.Items.Add(newChild);
+                    //ExpandInternal(tv_status2);
+
+                    //newChild = new TreeViewItem();
+                    //newChild.Header = areaList[2] + "网络";
+
+                    //sp1 = new StackPanel();
+                    //sp1.Orientation = Orientation.Horizontal;
+                    //sp1.Height = 40;
+
+                    //newChildnode1 = new TreeViewItem();
+                    //newChildnode1.Header = "工控端：";
+                    //newChildnode1.VerticalAlignment = VerticalAlignment.Center;
+                    //blueRectangle1 = new Ellipse();
+                    //blueRectangle1.Height = 15;
+                    //blueRectangle1.Width = 15;
+
+                    //blueBrush1 = new SolidColorBrush();
+                    //blueBrush1.Color = Colors.Blue;
+                    //blueRectangle1.StrokeThickness = 1;
+                    //blueRectangle1.Stroke = blueBrush1;
+                    //blueRectangle1.Fill = blueBrush1;
+
+                    //sp1.Children.Add(newChildnode1);
+                    //sp1.Children.Add(blueRectangle1);
+                    //newChild.Items.Add(sp1);
+
+                    //nodelist = new List<string>();
+                    //nodelist = StaticTools.GetAllNodesByArea(areaList[2]);
+                    //foreach (string s1 in nodelist)
+                    //{
+                    //    StackPanel sp = new StackPanel();
+                    //    sp.Orientation = Orientation.Horizontal;
+                    //    sp.Height = 40;
+
+                    //    TreeViewItem newChildnode = new TreeViewItem();
+                    //    newChildnode.Header = "编号：" + s1 + " 状态：";
+                    //    newChildnode.VerticalAlignment = VerticalAlignment.Center;
+                    //    Ellipse blueRectangle = new Ellipse();
+                    //    blueRectangle.Height = 15;
+                    //    blueRectangle.Width = 15;
+                    //    SolidColorBrush blueBrush = new SolidColorBrush();
+                    //    blueBrush.Color = Colors.Blue;
+                    //    blueRectangle.StrokeThickness = 1;
+                    //    blueRectangle.Stroke = blueBrush;
+                    //    blueRectangle.Fill = blueBrush;
+
+                    //    sp.Children.Add(newChildnode);
+                    //    sp.Children.Add(blueRectangle);
+                    //    newChild.Items.Add(sp);
+                    //}
+                    //tv_status3.Items.Add(newChild);
+                    //ExpandInternal(tv_status3);
+
+                    //newChild = new TreeViewItem();
+                    //newChild.Header = areaList[3] + "网络";
+
+                    //sp1 = new StackPanel();
+                    //sp1.Orientation = Orientation.Horizontal;
+                    //sp1.Height = 40;
+
+                    //newChildnode1 = new TreeViewItem();
+                    //newChildnode1.Header = "工控端：";
+                    //newChildnode1.VerticalAlignment = VerticalAlignment.Center;
+                    //blueRectangle1 = new Ellipse();
+                    //blueRectangle1.Height = 15;
+                    //blueRectangle1.Width = 15;
+
+                    //blueBrush1 = new SolidColorBrush();
+                    //blueBrush1.Color = Colors.Blue;
+                    //blueRectangle1.StrokeThickness = 1;
+                    //blueRectangle1.Stroke = blueBrush1;
+                    //blueRectangle1.Fill = blueBrush1;
+
+                    //sp1.Children.Add(newChildnode1);
+                    //sp1.Children.Add(blueRectangle1);
+                    //newChild.Items.Add(sp1);
+
+                    //nodelist = new List<string>();
+                    //nodelist = StaticTools.GetAllNodesByArea(areaList[3]);
+                    //foreach (string s1 in nodelist)
+                    //{
+                    //    StackPanel sp = new StackPanel();
+                    //    sp.Orientation = Orientation.Horizontal;
+                    //    sp.Height = 40;
+
+                    //    TreeViewItem newChildnode = new TreeViewItem();
+                    //    newChildnode.Header = "编号：" + s1 + " 状态：";
+                    //    newChildnode.VerticalAlignment = VerticalAlignment.Center;
+                    //    Ellipse blueRectangle = new Ellipse();
+                    //    blueRectangle.Height = 15;
+                    //    blueRectangle.Width = 15;
+                    //    SolidColorBrush blueBrush = new SolidColorBrush();
+                    //    blueBrush.Color = Colors.Blue;
+                    //    blueRectangle.StrokeThickness = 1;
+                    //    blueRectangle.Stroke = blueBrush;
+                    //    blueRectangle.Fill = blueBrush;
+
+                    //    sp.Children.Add(newChildnode);
+                    //    sp.Children.Add(blueRectangle);
+                    //    newChild.Items.Add(sp);
+                    //}
+                    //tv_status4.Items.Add(newChild);
+                    //ExpandInternal(tv_status4);
+                }
             }
-            tv_status1.Items.Add(newChild);
-            ExpandInternal(tv_status1);
-
-            newChild = new TreeViewItem();
-            newChild.Header = areaList[1] + "网络";
-            
-            sp1 = new StackPanel();
-            sp1.Orientation = Orientation.Horizontal;
-            sp1.Height = 40;
-
-            newChildnode1 = new TreeViewItem();
-            newChildnode1.Header = "工控端：";
-            newChildnode1.VerticalAlignment = VerticalAlignment.Center;
-            blueRectangle1 = new Ellipse();
-            blueRectangle1.Height = 15;
-            blueRectangle1.Width = 15;
-
-            blueBrush1 = new SolidColorBrush();
-            blueBrush1.Color = Colors.Blue;
-            blueRectangle1.StrokeThickness = 1;
-            blueRectangle1.Stroke = blueBrush1;
-            blueRectangle1.Fill = blueBrush1;
-
-            sp1.Children.Add(newChildnode1);
-            sp1.Children.Add(blueRectangle1);
-            newChild.Items.Add(sp1);
-
-            nodelist = new List<string>();
-            nodelist = StaticTools.GetAllNodesByArea(areaList[1]);
-            foreach (string s1 in nodelist)
+            catch(Exception ex)
             {
-                StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
-                sp.Height = 40;
 
-                TreeViewItem newChildnode = new TreeViewItem();
-                newChildnode.Header = "编号：" + s1 + " 状态：";
-                newChildnode.VerticalAlignment = VerticalAlignment.Center;
-                Ellipse blueRectangle = new Ellipse();
-                blueRectangle.Height = 15;
-                blueRectangle.Width = 15;
-                SolidColorBrush blueBrush = new SolidColorBrush();
-                blueBrush.Color = Colors.Blue;
-                blueRectangle.StrokeThickness = 1;
-                blueRectangle.Stroke = blueBrush;
-                blueRectangle.Fill = blueBrush;
-
-                sp.Children.Add(newChildnode);
-                sp.Children.Add(blueRectangle);
-                newChild.Items.Add(sp);
             }
-            tv_status2.Items.Add(newChild);
-            ExpandInternal(tv_status2);
-
-            newChild = new TreeViewItem();
-            newChild.Header = areaList[2] + "网络";
-
-            sp1 = new StackPanel();
-            sp1.Orientation = Orientation.Horizontal;
-            sp1.Height = 40;
-
-            newChildnode1 = new TreeViewItem();
-            newChildnode1.Header = "工控端：";
-            newChildnode1.VerticalAlignment = VerticalAlignment.Center;
-            blueRectangle1 = new Ellipse();
-            blueRectangle1.Height = 15;
-            blueRectangle1.Width = 15;
-
-            blueBrush1 = new SolidColorBrush();
-            blueBrush1.Color = Colors.Blue;
-            blueRectangle1.StrokeThickness = 1;
-            blueRectangle1.Stroke = blueBrush1;
-            blueRectangle1.Fill = blueBrush1;
-
-            sp1.Children.Add(newChildnode1);
-            sp1.Children.Add(blueRectangle1);
-            newChild.Items.Add(sp1);
-
-            nodelist = new List<string>();
-            nodelist = StaticTools.GetAllNodesByArea(areaList[2]);
-            foreach (string s1 in nodelist)
-            {
-                StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
-                sp.Height = 40;
-
-                TreeViewItem newChildnode = new TreeViewItem();
-                newChildnode.Header = "编号：" + s1 + " 状态：";
-                newChildnode.VerticalAlignment = VerticalAlignment.Center;
-                Ellipse blueRectangle = new Ellipse();
-                blueRectangle.Height = 15;
-                blueRectangle.Width = 15;
-                SolidColorBrush blueBrush = new SolidColorBrush();
-                blueBrush.Color = Colors.Blue;
-                blueRectangle.StrokeThickness = 1;
-                blueRectangle.Stroke = blueBrush;
-                blueRectangle.Fill = blueBrush;
-
-                sp.Children.Add(newChildnode);
-                sp.Children.Add(blueRectangle);
-                newChild.Items.Add(sp);
-            }
-            tv_status3.Items.Add(newChild);
-            ExpandInternal(tv_status3);
-
-            newChild = new TreeViewItem();
-            newChild.Header = areaList[3] + "网络";
-
-            sp1 = new StackPanel();
-            sp1.Orientation = Orientation.Horizontal;
-            sp1.Height = 40;
-
-            newChildnode1 = new TreeViewItem();
-            newChildnode1.Header = "工控端：";
-            newChildnode1.VerticalAlignment = VerticalAlignment.Center;
-            blueRectangle1 = new Ellipse();
-            blueRectangle1.Height = 15;
-            blueRectangle1.Width = 15;
-
-            blueBrush1 = new SolidColorBrush();
-            blueBrush1.Color = Colors.Blue;
-            blueRectangle1.StrokeThickness = 1;
-            blueRectangle1.Stroke = blueBrush1;
-            blueRectangle1.Fill = blueBrush1;
-
-            sp1.Children.Add(newChildnode1);
-            sp1.Children.Add(blueRectangle1);
-            newChild.Items.Add(sp1);
-
-            nodelist = new List<string>();
-            nodelist = StaticTools.GetAllNodesByArea(areaList[3]);
-            foreach (string s1 in nodelist)
-            {
-                StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
-                sp.Height = 40;
-
-                TreeViewItem newChildnode = new TreeViewItem();
-                newChildnode.Header = "编号：" + s1 + " 状态：";
-                newChildnode.VerticalAlignment = VerticalAlignment.Center;
-                Ellipse blueRectangle = new Ellipse();
-                blueRectangle.Height = 15;
-                blueRectangle.Width = 15;
-                SolidColorBrush blueBrush = new SolidColorBrush();
-                blueBrush.Color = Colors.Blue;
-                blueRectangle.StrokeThickness = 1;
-                blueRectangle.Stroke = blueBrush;
-                blueRectangle.Fill = blueBrush;
-
-                sp.Children.Add(newChildnode);
-                sp.Children.Add(blueRectangle);
-                newChild.Items.Add(sp);
-            }
-            tv_status4.Items.Add(newChild);
-            ExpandInternal(tv_status4);
         }
 
         private static void ExpandInternal(System.Windows.Controls.ItemsControl targetItemContainer)
@@ -497,19 +648,28 @@ namespace AgriManagement
 
         private void InitSensors()
         {
-            for (int i = 0; i < sensorCount; i++)
+            List<string> areas = StaticTools.GetAllArea();
+
+            foreach (string area in areas)
             {
-                List<History> ls = new List<History>();
-                List<History> ls1 = new List<History>();
-                Item item = new Item();
-                item.name = i.ToString();
-                item.area = StaticTools.GetAreaByNode(i.ToString());
-                item.status = Status.OnLine;
-                item.id = i;
-                item.RetryCount = 0;
-                item.historys = new List<History>();
-                items.Add(i.ToString(), item);
-                cloudData.Add(i.ToString(), ls1);
+                string areaid = StaticTools.getAreaID(area);
+                List<string> nodes = StaticTools.GetAllNodesByArea(area);
+                foreach (string node in nodes)
+                {
+                    List<History> ls = new List<History>();
+                    List<History> ls1 = new List<History>();
+                    Item item = new Item();
+                    item.name = (Convert.ToInt32(node)+Convert.ToInt32(areaid) *100).ToString();
+                    item.area = area;
+                    item.status = Status.OnLine;
+                    item.id = Convert.ToInt32(node) + Convert.ToInt32(areaid) * 100;
+                    item.RetryCount = 0;
+                    item.historys = new List<History>();
+                    item.ErrorCount = 0;
+                    item.lastStatus = Status.Regular;
+                    items.Add(item.id.ToString(), item);
+                    cloudData.Add(item.id.ToString(), ls1);
+                }
             }
         }
 
@@ -580,8 +740,9 @@ namespace AgriManagement
                 try {
                     updateSenser();
                     updateShow();
-                    updateChat(_NodeChat);
+                    updateChat(_AreaChat,_NodeChat);
                     updateHistory();
+                    updateFacilityStatus();
                     //updateTable(_historyID);
                     Thread.Sleep((int)this._freq_data * 1000);
                 }
@@ -592,17 +753,22 @@ namespace AgriManagement
         #endregion
         private void alert(string id)
         {
-            if (_play == 1)
-            {
-                SoundPlayer sp = new SoundPlayer();
-                string strFileName = AppDomain.CurrentDomain.BaseDirectory.ToString() + "2.wav";
-                sp.SoundLocation = strFileName;
-                sp.Play();
-            }
-            MessageBox.Show(id + "号设备故障，请查看！");
+            cb_play.Dispatcher.Invoke(() => {
+                if (cb_play.IsChecked == true)
+                {
+                    SoundPlayer sp = new SoundPlayer();
+                    string strFileName = AppDomain.CurrentDomain.BaseDirectory.ToString() + "2.wav";
+                    sp.SoundLocation = strFileName;
+                    sp.Play();
+                }
+            });
+
+            //MessageBox.Show(id + "号设备故障，请查看！");
         }
-        private void updateChat(string id)
+        private void updateChat(string areaid,string nodeid)
         {
+
+            string id = (Convert.ToInt32(StaticTools.getAreaID(areaid)) * 100 + Convert.ToInt32(nodeid)).ToString();
             txt_error_facility.Dispatcher.Invoke(() => {
                 txt_error_facility.Text = "异常设备编号("+_errorList.Count+")：\n";
                 foreach (string key in _errorList.Keys)
@@ -688,36 +854,36 @@ namespace AgriManagement
             }
             #endregion
 
-            //#region mos NH
-            //if (items[id].historys.Count > 0)
-            //{
-            //    double xAxie = 25;
-            //    double yAxie = 0;
+            #region mos NH
+            if (items[id].historys.Count > 0)
+            {
+                double xAxie = 25;
+                double yAxie = 0;
 
-            //    int start = 0;
-            //    if (items[id].historys.Count > _maxShow)
-            //    {
-            //        start = items[id].historys.Count - _maxShow;
-            //        yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].moisture, 120, heigh);
-            //    }
-            //    else
-            //    {
-            //        start = 0;
-            //        yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[0].moisture, 120, heigh);
-            //    }
-            //    int _uint = _maxShow / 20;
-            //    for (int i = start + 1; i < items[id].historys.Count; i++)
-            //    {
-            //        double y = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[i].moisture, 120, heigh);
-            //        double x = xAxie + 2.2;
-            //        drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
-            //        if ((i - start - 1) % _uint == 0)
-            //            drawText(cav_chat, items[id].historys[i].time.ToShortTimeString(), x - 15, heigh + 30 + 480, 12, 40);
-            //        xAxie = x;
-            //        yAxie = y;
-            //    }
-            //}
-            //#endregion
+                int start = 0;
+                if (items[id].historys.Count > _maxShow)
+                {
+                    start = items[id].historys.Count - _maxShow;
+                    yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].moisture, 120, heigh);
+                }
+                else
+                {
+                    start = 0;
+                    yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[0].moisture, 120, heigh);
+                }
+                int _uint = _maxShow / 20;
+                for (int i = start + 1; i < items[id].historys.Count; i++)
+                {
+                    double y = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[i].moisture, 120, heigh);
+                    double x = xAxie + 2.2;
+                    drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
+                    if ((i - start - 1) % _uint == 0)
+                        drawText(cav_chat, items[id].historys[i].time.ToShortTimeString(), x - 15, heigh + 30 + 480, 12, 40);
+                    xAxie = x;
+                    yAxie = y;
+                }
+            }
+            #endregion
         }
         private List<History> GetAveHistory(string area)
         {
@@ -725,7 +891,13 @@ namespace AgriManagement
             List<string> areaList = StaticTools.GetAllArea();
             var data = items.Where(a => a.Value.area == area).Select(p => p.Key);
             if (data.ToList().Count == 0) return lh;
-            double datacount = items["0"].historys.Count;
+
+            string tempnode = StaticTools.GetAllNodesByArea(areaList[0])[0];
+            string temparea = StaticTools.getAreaID(areaList[0]);
+
+            string tempkey = (Convert.ToInt32(temparea) * 100 + Convert.ToInt32(tempnode)).ToString();
+
+            double datacount = items[tempkey].historys.Count;
             int unit = (int)datacount / 288;
             for (int i = 0; i < datacount; i++)
             {
@@ -855,30 +1027,30 @@ namespace AgriManagement
                 }
                 #endregion
 
-                //#region mos NH
-                //if (hs.Count > 0)
-                //{
-                //    double xAxie = 25;
-                //    double yAxie = 0;
+                #region mos NH
+                if (hs.Count > 0)
+                {
+                    double xAxie = 25;
+                    double yAxie = 0;
 
-                //    int start = 0;
-                //    yAxie = top + 480 + heigh - StaticTools.GetYaxia(hs[0].NH, 120, heigh);
+                    int start = 0;
+                    yAxie = top + 480 + heigh - StaticTools.GetYaxia(hs[0].NH, 120, heigh);
 
-                //    int _uint = 36;
-                //    for (int i = start + 1; i < hs.Count; i++)
-                //    {
-                //        double y = top + 480 + heigh - StaticTools.GetYaxia(hs[i].NH, 120, heigh);
-                //        double x = xAxie + 2.2;
-                //        drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
-                //        if (i % _uint == 0 || i == start + 1)
-                //            drawText(cav_history, hs[i].time.ToShortTimeString(), x - 15, top + heigh + 5 + 480, 12, 28);
-                //        xAxie = x;
-                //        yAxie = y;
-                //    }
-                //}
-                //#endregion
+                    int _uint = 36;
+                    for (int i = start + 1; i < hs.Count; i++)
+                    {
+                        double y = top + 480 + heigh - StaticTools.GetYaxia(hs[i].NH, 120, heigh);
+                        double x = xAxie + 2.2;
+                        drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
+                        if (i % _uint == 0 || i == start + 1)
+                            drawText(cav_history, hs[i].time.ToShortTimeString(), x - 15, top + heigh + 5 + 480, 12, 28);
+                        xAxie = x;
+                        yAxie = y;
+                    }
+                }
+                #endregion
                 index++;
-                return;
+                //return;
             }
 
         }
@@ -959,8 +1131,8 @@ namespace AgriManagement
                 drawRectang(cav, p, width, heigh, string.Format("{0}", "°C"), string.Format("{0}", "温度趋势图（度）"), brush);
                 p = new Point(sp.X, sp.Y + 240);
                 drawRectang(cav, p, width, heigh, string.Format("{0}", "度"), string.Format("{0}", "湿度趋势图（度）"), brush);
-                //p = new Point(sp.X, sp.Y + 480);
-                //drawRectang(cav, p, width, heigh, string.Format("{0}", "%"), string.Format("{0}", "氨气含量趋势图（%）"), brush);
+                p = new Point(sp.X, sp.Y + 480);
+                drawRectang(cav, p, width, heigh, string.Format("{0}", "%"), string.Format("{0}", "氨气含量趋势图（%）"), brush);
             });
         }
         private void drawText(Canvas cav, string data, double x, double y, double FontSize, double width)
@@ -982,124 +1154,142 @@ namespace AgriManagement
 
         private void updateSenser()
         {
-            getData();
-            return;
-            for (int i = 0; i < sensorCount; i++)
+            //getData();
+            //return;
+            List<string> areas = StaticTools.GetAllArea();
+
+            foreach (string area in areas)
             {
-                History it = new History();
+                string areaId = StaticTools.getAreaID(area);
+                List<string> nodes = StaticTools.GetAllNodesByArea(area);
 
-                if (_device.updateSensorData(i.ToString(), ref it))//do device update
+                foreach (string node in nodes)
                 {
-                    if (items.ContainsKey(i.ToString()))
+                    History it = new History();
+
+                    int id = Convert.ToInt32(areaId) * 100 + Convert.ToInt32(node);
+                    if (items[id.ToString()].historys.Count >= _maxHistorys)
+                        items[id.ToString()].historys.RemoveAt(0);
+
+                    double[] data = _bill.getNodeData(id);
+
+
+                    try
                     {
-                        if (items[i.ToString()].historys.Count >= _maxHistorys)
-                            items[i.ToString()].historys.RemoveAt(0);
-                        History itforsave = CopyHistory(it);
-                        History it1 = CopyHistory(it);
-
-                        items[i.ToString()].status = Status.OnLine;
-                        items[i.ToString()].historys.Add(it);
-
-                        cloudData[i.ToString()].Add(it1);
-
-                        if (checkData(it)==Status.Error)
+                        if (data == null)
                         {
-                            DataGridShow error = new DataGridShow();
-                            error.status = Status.Error;
-                            error.area = items[i.ToString()].area;
-                            error.id = items[i.ToString()].id;
-                            error.moisture = it.moisture;
-                            error.NH = it.NH;
-                            error.status = Status.Error;
-                            error.temperature = it.temperature;
-                            error.time = it.time;
+                            double temp = 0;
+                            double moist = 0;
+                            double NH = 0;
 
+                            Status status = checkData(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
+                            items[id.ToString()].historys.Add(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
+                            items[id.ToString()].status = Status.OffLine;
+                            DataGridShow error = new DataGridShow();
+                            error.area = items[id.ToString()].area;
+                            error.id = items[id.ToString()].id;
+                            error.moisture = moist;
+                            error.NH = NH;
+                            error.status = status;
+                            error.temperature = temp;
+                            error.time = DateTime.Now;
                             errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
 
-                            if (!_errorList.ContainsKey(i.ToString()))
-                            {
-                                _errorList.Add(i.ToString(), true);
-                            }
-                        }
-
-                        if (i == 1)
-                        {
                             DataGridShow dgs = new DataGridShow()
                             {
-                                status = checkData(it),
-                                area = items[i.ToString()].area,
-                                id = items[i.ToString()].id,
-                                moisture = it.moisture,
-                                NH = it.NH,
-                                temperature = it.temperature,
-                                time = it.time,
-                                isShow = true
-                            };
-                            SrollBarDataGrid.Dispatcher.Invoke(() =>
-                            {
-                                SrollBarDataGrid.Items.Add(dgs);
-                                //SrollBarDataGrid.RowDetailsVisibilityMode = DataGridRowDetailsVisibilityMode.Collapsed;
-                            });
-                        }
-                        else
-                        {
-                            DataGridShow dgs = new DataGridShow()
-                            {
-                                status = checkData(it),
-                                area = items[i.ToString()].area,
-                                id = items[i.ToString()].id,
-                                moisture = it.moisture,
-                                NH = it.NH,
-                                temperature = it.temperature,
-                                time = it.time,
+                                status = status,
+                                area = items[id.ToString()].area,
+                                id = items[id.ToString()].id,
+                                moisture = moist,
+                                NH = NH,
+                                temperature = temp,
+                                time = DateTime.Now,
                                 isShow = false
                             };
-                            if (_mytestdata.Count > 30 * 24 * 60)
-                            {
-                                _mytestdata.RemoveAt(0);
-                            }
                             _mytestdata.Add(dgs);
+                            if (status == Status.Error)
+                                if (!_errorList.ContainsKey(id.ToString()))
+                                {
+                                    _errorList.Add(id.ToString(), true);
+                                }
+
+                            cb_update.Dispatcher.Invoke(() => {
+                                if (cb_update.IsChecked == true)
+                                    _cloud.PostMethodMulti(id.ToString(), temp, moist, NH);
+                            });
+                            alert(items[id.ToString()].id.ToString());
                         }
+                        else {
+                            double temp = data[2];
+                            double moist = data[3];
+                            double NH = data[4];
 
+                            Status status = checkData(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
+                            items[id.ToString()].historys.Add(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
 
+                            if (status == Status.Warning || status == Status.Error)
+                            {
+                                items[id.ToString()].ErrorCount++;
+                                DataGridShow error = new DataGridShow();
+                                error.area = items[id.ToString()].area;
+                                error.id = items[id.ToString()].id;
+                                error.moisture = moist;
+                                error.NH = NH;
+                                error.status = status;
+                                error.temperature = temp;
+                                error.time = DateTime.Now;
+                                errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
+                                if (items[id.ToString()].ErrorCount > 2)
+                                {
+                                    if (items[id.ToString()].lastStatus == Status.Regular)
+                                    {
+                                        items[id.ToString()].lastStatus = Status.Warning;
+                                        startFan(Convert.ToInt32(areaId), Convert.ToInt32(node));
+                                        startFan(Convert.ToInt32(areaId), Convert.ToInt32(node));
+
+                                        alert(items[id.ToString()].id.ToString());
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (items[id.ToString()].lastStatus == Status.Warning)
+                                {
+                                    items[id.ToString()].lastStatus = Status.Regular;
+                                    stopFan(Convert.ToInt32(areaId), Convert.ToInt32(node));
+                                    stopFan(Convert.ToInt32(areaId), Convert.ToInt32(node));
+                                    items[id.ToString()].ErrorCount = 0;
+                                }
+                            }
+
+                            DataGridShow dgs = new DataGridShow()
+                            {
+                                status = status,
+                                area = items[id.ToString()].area,
+                                id = items[id.ToString()].id,
+                                moisture = moist,
+                                NH = NH,
+                                temperature = temp,
+                                time = DateTime.Now,
+                                isShow = false
+                            };
+                            _mytestdata.Add(dgs);
+                            if (status == Status.Error)
+                                if (!_errorList.ContainsKey(id.ToString()))
+                                {
+                                    _errorList.Add(id.ToString(), true);
+                                }
+
+                            cb_update.Dispatcher.Invoke(() => {
+                                if (cb_update.IsChecked == true)
+                                    _cloud.PostMethodMulti(id.ToString(), temp, moist, NH);
+                            });
+                        }
                     }
-                }
-                else
-                {
-                    if (items.ContainsKey(i.ToString()))
-                    {
-                        if (items[i.ToString()].historys.Count >= _maxHistorys)
-                            items[i.ToString()].historys.RemoveAt(0);
-                        items[i.ToString()].historys.Add(it);
-                        History it1 = new History();
-                        it1.id = it.id;
-                        it1.moisture = it.moisture;
-                        it1.NH = it.NH;
-                        it1.temperature = it.temperature;
-                        it1.time = it.time;
-                        items[i.ToString()].RetryCount++;
-                        cloudData[i.ToString()].Add(it1);
-                    }
-
-                    DataGridShow error = new DataGridShow();
-                    error.status = Status.Error;
-                    error.area = items[i.ToString()].area;
-                    error.id = items[i.ToString()].id;
-                    error.moisture = it.moisture;
-                    error.NH = it.NH;
-                    error.status = Status.Error;
-                    error.temperature = it.temperature;
-                    error.time = it.time;
-
-                    errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
-
-                    if (!_errorList.ContainsKey(i.ToString()))
-                    {
-                        _errorList.Add(i.ToString(), true);
-                    }
+                    catch (Exception ex)
+                    { }
                 }
             }
-
             //do cloud update!
         }
 
@@ -1124,7 +1314,8 @@ namespace AgriManagement
                     {
                         foreach (string i in items.Keys)
                         {
-                            if (StaticTools.checkNode(key, items[i].id.ToString()))
+                            //if (StaticTools.checkNode(key, (items[i].id%100).ToString()))
+                            if (key == items[i].area)
                             {
                                 int index = items[i].historys.Count;
                                 if (index > 0)
@@ -1191,9 +1382,7 @@ namespace AgriManagement
 
             //byte[] cmd = Cmds.GetCmd(Cmds.ReadAllNodeData);
 
-            _device.sp_DataSender(cmd);
-            Thread.Sleep(1500);
-            byte[] recv = _device.sp_read();
+            byte[] recv = _device.sp_DataSender(cmd);
             if (recv == null)
             {
                 //txt_recv.Text = "error";
@@ -1538,7 +1727,7 @@ namespace AgriManagement
                 StaticTools.SaveConfig("i_insertUser", txt_insert.Text);
                 StaticTools.SaveConfig("i_deleteUser", txt_delete.Text);
                 StaticTools.SaveConfig("i_login", txt_login.Text);
-                StaticTools.SaveConfig("port", StaticTools.getPortvalue(cob_port.SelectedIndex).ToString());
+                //StaticTools.SaveConfig("port", StaticTools.getPortvalue(cob_port.SelectedIndex).ToString());
                 if (cb_play.IsChecked == true) _play = 1;
                 else _play = 0;
                 StaticTools.SaveConfig("play", _play.ToString());
@@ -1615,8 +1804,9 @@ namespace AgriManagement
         {
             if (e.AddedItems.Count > 0)
             {
-                updateChat(e.AddedItems[0].ToString());
                 _NodeChat = e.AddedItems[0].ToString();
+                updateChat(_AreaChat,_NodeChat);
+
             }
         }
 
@@ -1690,6 +1880,7 @@ namespace AgriManagement
 
         private void btn_addEq_Click(object sender, RoutedEventArgs e)
         {
+            int areaid = StaticTools.getAreaNewID();
             string id = txt_eqId.Text;
             string name = txt_eqName.Text;
             string area = cmb_eqArea.SelectedValue.ToString();
@@ -1708,7 +1899,7 @@ namespace AgriManagement
                 MessageBox.Show("请先添加区域！");
                 return;
             }
-            StaticTools.AddNode(area, id, name);
+            StaticTools.AddNode(areaid,area, id, name);
             update_cmd();
             MessageBox.Show("添加成功！");
         }
@@ -1739,7 +1930,15 @@ namespace AgriManagement
 
         private void btn_addArea_Click(object sender, RoutedEventArgs e)
         {
-            StaticTools.AddArea(txt_addarea.Text.ToString());
+            int id = StaticTools.getAreaNewID();
+
+            if (id < 0)
+            {
+                MessageBox.Show("网络数量已达到最大！");
+                return;
+            }
+
+            StaticTools.AddArea(txt_addarea.Text.ToString(), id);
             int count = cmb_eqArea.Items.Count;
             for (int i = 0; i < count; i++)
             {
@@ -1755,16 +1954,6 @@ namespace AgriManagement
             MessageBox.Show("添加成功！");
         }
 
-        private void btn_send_Click(object sender, RoutedEventArgs e)
-        {
-            //byte[] data = strToToHexByte(s);
-            byte[] data = Cmds.testCmd;
-            //_device.sp_DataSender(data);
-            //Thread.Sleep(100);
-            //byte[] recv = _device.sp_read();
-
-            txt_recv.Text += hexByteToStr(data);
-        }
         private static byte[] strToToHexByte(string hexString)
         {
             hexString = hexString.Replace(" ", "");
@@ -1842,43 +2031,44 @@ namespace AgriManagement
             List<int> data2 = new List<int>();
             int data3 = 0;
             double[] data4;
-            data.Add(0101);
-            data.Add(0102);
-            int id = 0101;
-            int id1 = 0102;
+            data.Add(0202);
+            data.Add(0203);
+            int id = 203;
+            int id1 = 205;
             bool result = false;
 
-            int freq = 10;
+            int freq = 430000000;
+            int bw = 7;
             int sf = 10;
-            int bw = 10;
-            int cr = 10;
-            int opt = 1;
-            int rf = 10;
+            int rc = 2;
+            int check = 0;
+            int enc = 20;
 
-            int len = 10;
-            int addr = 10;
+            int len = 200;
+            int addr = 0x40;
 
             List<byte> ds = new List<byte>();
-            ds.Add(0x00);
-            ds.Add(0x01);
-
-
-            result = _bill.AddBSList(data);
+            ds.Add(0x80);
+            //ds.Add(0x01);
+            
+            //result = _bill.DeleteNodeList();
+            //data4 = _bill.getNodeList();
+            //result = _bill.AddBSList(data);
             result = _bill.Check();
-            result = _bill.DeleteBSList(data);
-            data1 = _bill.getAllNodeData();
-            data1 = _bill.getAllNodeDebug();
-            data2 = _bill.getBS();
-            data3 = _bill.getBSLength();
-            data2 = _bill.getBSList();
-            data4 = _bill.getNodeData(id);
-            data4 = _bill.getNodeDebug(id);
-            result = _bill.UpdateNodeId(id, id1);
-            result = _bill.setBSLength(len);
-            result = _bill.setBS(freq, sf, bw, cr, opt, rf);
-            result = _bill.setBSToNode(id, freq, sf, bw, cr, opt, rf);
-            result = _bill.setBSToNode(id, id1, freq, sf, bw, cr, opt, rf);
-            result = _bill.setNodeRom(id, addr, ds);
+            //result = _bill.DeleteBSList(data);
+            //data1 = _bill.getAllNodeData();
+            //data1 = _bill.getAllNodeDebug();
+            //data2 = _bill.getBS();
+            //data3 = _bill.getBSLength();
+            //data2 = _bill.getBSList();
+            //data4 = _bill.getNodeData(id);//status eunm
+            //data4 = _bill.getNodeDebug(id);
+            //result = _bill.UpdateNodeId(id, id1);
+            //result = _bill.setBSLength(len);
+            //result = _bill.setBS(freq, sf, bw, rc, check, enc);
+            //result = _bill.setBSToNode(id, freq, sf, bw, rc, check, enc);
+            //result = _bill.setBSToNode(id, id1, freq, sf, bw, rc, check, enc);
+            //result = _bill.setNodeRom(id, addr, ds);
         }
 
         private void btn_read_Click(object sender, RoutedEventArgs e)
@@ -1893,8 +2083,8 @@ namespace AgriManagement
             {
                 try
                 {
-                    int freq = data[0];
-                    int bw = data[1];
+                    int freq = data[0]/1000;
+                    string bw = getBWShow(data[1].ToString());
                     int sf = data[2];
                     int rc = data[3];
                     int check = data[4];
@@ -1915,27 +2105,27 @@ namespace AgriManagement
 
         private void btn_set_Click(object sender, RoutedEventArgs e)
         {
-            int freq = 10;
-            int bw = 6;
-            int sf = 1;
-            int rc = 0;
+            int freq = 430000000;
+            int bw = 7;
+            int sf = 10;
+            int rc = 2;
             int check = 0;
-            int enc = -1;
+            int enc = 20;
             try
             {
-                freq = Convert.ToInt32(txt_fre.Text);
+                freq = Convert.ToInt32(txt_fre.Text)*1000;
             }
             catch
             {
                 MessageBox.Show("中心频点输入有误（10~10000）");
                 return;
             }
-            freq = freq > 10000 ? 10000 : freq;
-            freq = freq < 10 ? 10 : freq;
+            //freq = freq > 10000 ? 10000 : freq;
+            //freq = freq < 10 ? 10 : freq;
 
             sf = Convert.ToInt32(txt_SF.SelectedValue.ToString());
 
-            bw = getBW(txt_SF.SelectedValue.ToString());
+            bw = getBW(txt_BW.SelectedValue.ToString());
 
             rc = Convert.ToInt32(txt_rate.SelectedValue.ToString());
 
@@ -1999,10 +2189,7 @@ namespace AgriManagement
             try
             {
                 byte[] cmd = Cmds.cmd_CmdStartFanByID(group, member);
-
-                _device.sp_DataSender(cmd);
-                Thread.Sleep(1500);
-                byte[] recv = _device.sp_read();
+                byte[] recv = _device.sp_DataSender(cmd);
                 if (recv == null)
                 {
                     Console.WriteLine("未读出设备信息，请检查设备是否正常！");
@@ -2034,10 +2221,7 @@ namespace AgriManagement
             try
             {
                 byte[] cmd = Cmds.cmd_CmdStopFanByID(group, member);
-
-                _device.sp_DataSender(cmd);
-                Thread.Sleep(1500);
-                byte[] recv = _device.sp_read();
+                byte[] recv = _device.sp_DataSender(cmd);
                 if (recv == null)
                 {
                     //MessageBox.Show("未读出设备信息，请检查设备是否正常！");
@@ -2067,6 +2251,10 @@ namespace AgriManagement
         {
             if (cmb_nodetable.SelectedValue == null) return;
             string id = cmb_nodetable.SelectedValue.ToString();
+            string areaid = StaticTools.getAreaID(cmb_areatable.SelectedValue.ToString());
+
+            id = (Convert.ToInt32(areaid) * 100 + Convert.ToInt32(id)).ToString();
+
             if (id == "全部")
                 _historyID = "";
             else
@@ -2077,23 +2265,57 @@ namespace AgriManagement
         private void Window_Closed(object sender, EventArgs e)
         {
             IsRun = false;
+            _device.Dispose();
+            _bill.Dispose();
         }
 
         private void btn_start_Click(object sender, RoutedEventArgs e)
         {
-            _device.setPortName(txt_port.Text);
-            Console.WriteLine(_device.connect());
-            _bill = new DeviceBill(_device);
+            //_device.setPortName(txt_port.Text);
+            //Console.WriteLine(_device.connect());
+            //_bill = new DeviceBill(_device);
             //start();
         }
 
         private byte[] Read(byte[] cmds)
         {
-            _device.sp_DataSender(cmds);
-            Thread.Sleep(1000);
-            byte[] recv = _device.sp_read();
+            byte[] recv = _device.sp_DataSender(cmds);
 
             return recv;
+        }
+
+        private void btn_del_Click_1(object sender, RoutedEventArgs e)
+        {
+            var cont = tv_cmd.SelectedValue as TreeViewItem;
+
+            if (cont == null)
+            {
+                MessageBox.Show("请选中一个节点(网络)!");
+                return;
+            }
+
+            var cont1 = cont.Parent as TreeViewItem;
+
+            if (cont1 == null)
+            {
+                string node = "";
+                string area = cont.Header.ToString().Substring(0, 2);
+
+                if (StaticTools.DelNode(area, node))
+                    MessageBox.Show("删除成功！");
+                else MessageBox.Show("删除失败！");
+            }
+            else if (cont1 != null & cont != null)
+            {
+                string node = cont.Header.ToString().Split('：')[1];
+                string area = cont1.Header.ToString().Substring(0, 2);
+
+                if (StaticTools.DelNode(area, node))
+                    MessageBox.Show("删除成功！");
+                else MessageBox.Show("删除失败！");
+            }
+
+            update_cmd();
         }
     }
 }

@@ -63,6 +63,69 @@ namespace AgriManagement.tools
             else if (num == 1800) return 8;
             else return 9;
         }
+        public static int getAreaNewID()
+        {
+            List<string> strs = new List<string>();
+
+            XmlDocument doc = new XmlDocument();
+            //获得配置文件的全路径
+            string strFileName = AppDomain.CurrentDomain.BaseDirectory.ToString() + "config.xml";
+            doc.Load(strFileName);
+            //找出名称为“add”的所有元素
+            XmlNodeList nodes = doc.GetElementsByTagName("Area");
+
+            if (nodes.Count >= 4)
+                return -1;
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                //获得将当前元素的key属性
+                string name = nodes[i].Attributes[1].Value;
+                //根据元素的第一个属性来判断当前的元素是不是目标元素
+                strs.Add(name);
+            }
+            int id = 1;
+            strs.Sort();
+            foreach (string s in strs)
+            {
+                try
+                {
+                    int si = Convert.ToInt32(s);
+                    if (si <= id)
+                    {
+                        id++;
+                        continue;
+                    }
+                    else return id;
+                }
+                catch
+                {
+                    return id;
+                }
+            }
+            return id;
+        }
+        public static string getAreaID(string area)
+        {
+            List<string> strs = new List<string>();
+
+            XmlDocument doc = new XmlDocument();
+            //获得配置文件的全路径
+            string strFileName = AppDomain.CurrentDomain.BaseDirectory.ToString() + "config.xml";
+            doc.Load(strFileName);
+            //找出名称为“add”的所有元素
+            XmlNodeList nodes = doc.GetElementsByTagName("Area");
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                //获得将当前元素的key属性
+                string name = nodes[i].Attributes[0].Value;
+                //根据元素的第一个属性来判断当前的元素是不是目标元素
+                if(name == area)return nodes[i].Attributes[1].Value;
+            }
+
+            return "";            
+        }
         public static int getPortindex(double num)
         {
             if (num == 9600) return 0;
@@ -158,6 +221,48 @@ namespace AgriManagement.tools
             return strs;
         }
 
+        public static bool DelNode(string area,string node)
+        {
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+                //获得配置文件的全路径
+                string strFileName = AppDomain.CurrentDomain.BaseDirectory.ToString() + "config.xml";
+                doc.Load(strFileName);
+                //找出名称为“add”的所有元素
+                XmlNodeList nodes = doc.GetElementsByTagName("Area");
+                XmlNodeList ele = doc.GetElementsByTagName("Areas");
+
+                if (node == "")
+                {
+                    foreach (XmlNode nodee in doc.SelectNodes("Areas/Area"))
+                        if (nodee.Attributes[0].Value == area)
+                            ele[0].RemoveChild(nodee);
+                }
+                else {
+
+                    for (int i = 0; i < nodes.Count; i++)
+                    {
+                        //获得将当前元素的key属性
+                        string name = nodes[i].Attributes[0].Value;
+                        //根据元素的第一个属性来判断当前的元素是不是目标元素
+                        if (name == area)
+                        {
+                            foreach (XmlNode nodee in nodes[i].SelectNodes("node"))
+                                if (nodee.Attributes[0].Value == node)
+                                    nodes[i].RemoveChild(nodee);
+                        }
+                    }
+                }
+                //保存上面的修改
+                doc.Save(strFileName);
+
+                return true;
+            }
+            catch(Exception ex)
+            { return false; }
+        }
+
         public static List<string> GetAllNodesByArea(string area)
         {
             List<string> strs = new List<string>();
@@ -184,7 +289,7 @@ namespace AgriManagement.tools
             return strs;
         }
 
-        public static void AddArea(string areaname)
+        public static void AddArea(string areaname,int id)
         {
             List<string> strs = new List<string>();
 
@@ -198,15 +303,16 @@ namespace AgriManagement.tools
 
             XmlElement xe1 = doc.CreateElement("Area");//创建一个节点 
             xe1.SetAttribute("name",areaname);//设置该节点genre属性 
+            xe1.SetAttribute("id", id.ToString());//设置该节点genre属性 
             root.AppendChild(xe1);
             //保存上面的修改
             doc.Save(strFileName);
         }
 
-        public static void AddNode(string areaname,string nodeid,string nodename)
+        public static void AddNode(int areaid,string areaname,string nodeid,string nodename)
         {
             if (!checkArea(areaname))
-                AddArea(areaname);
+                AddArea(areaname,areaid);
             List<string> strs = new List<string>();
 
             XmlDocument doc = new XmlDocument();
