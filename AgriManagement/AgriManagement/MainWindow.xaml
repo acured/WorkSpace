@@ -160,6 +160,13 @@
                     <Button x:Name="btn_updateSetting" Content="确认" HorizontalAlignment="Left" Margin="428,172,0,0" VerticalAlignment="Top" Width="75" Click="btn_updateSetting_Click"/>
                     <CheckBox x:Name="cb_play" Content="异常播放音乐" HorizontalAlignment="Left" Margin="552,172,0,0" VerticalAlignment="Top"/>
 
+                    <CheckBox x:Name="cb_temp" Content="是否显示温度" HorizontalAlignment="Left" Margin="430,220,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="cb_moist" Content="是否显示湿度" HorizontalAlignment="Left" Margin="430,240,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="cb_ch3" Content="是否显示氨气" HorizontalAlignment="Left" Margin="430,260,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="cb_data1" Content="是否显示土壤温度" HorizontalAlignment="Left" Margin="430,300,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="cb_data2" Content="是否显示土壤湿度" HorizontalAlignment="Left" Margin="430,320,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="cb_data3" Content="是否显示光强" HorizontalAlignment="Left" Margin="430,340,0,0" VerticalAlignment="Top"/>
+
                     <DataGrid Margin="50,67,0,0" AutoGenerateColumns="False" HorizontalAlignment="Left" VerticalAlignment="Top" Name="userData" IsReadOnly="True">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ID" Width="100" Binding="{Binding id}"/>
@@ -188,12 +195,8 @@
 
                 </Grid>
             </TabItem>
-            <TabItem Name="app_cmd" Header="调试接口">
+            <TabItem Name="app_cmd" Header="调试接口" BorderBrush="#FF232020">
                 <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="325*"/>
-                        <ColumnDefinition Width="721*"/>
-                    </Grid.ColumnDefinitions>
                     <Label x:Name="label9" Content="服务器地址：" HorizontalAlignment="Left" Margin="50,50,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="txt_addr" HorizontalAlignment="Left" Height="23" Margin="150,52,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="250" Grid.ColumnSpan="2"/>
                     <Label x:Name="label10" Content="上传数据接口：" HorizontalAlignment="Left" Margin="50,100,0,0" VerticalAlignment="Top"/>
@@ -207,46 +210,39 @@
                     <Label x:Name="label14" Content="登陆接口：" HorizontalAlignment="Left" Margin="50,300,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="txt_login" HorizontalAlignment="Left" Height="23" Margin="150,302,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="250" Grid.ColumnSpan="2"/>
                     <Button x:Name="btn_commit" Content="更新" HorizontalAlignment="Left" Margin="57,357,0,0" VerticalAlignment="Top" Width="75" Click="btn_commit_Click"/>
-                    <!--<Label x:Name="label15" Content="串口ID：" HorizontalAlignment="Left" Margin="10,438,0,0" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="cob_coms" HorizontalAlignment="Left" Margin="68,441,0,0" VerticalAlignment="Top" Width="120"/>
-                    <Label x:Name="label16" Content="波特率：" HorizontalAlignment="Left" Margin="10,464,0,0" VerticalAlignment="Top"/>
-                    <ComboBox x:Name="cob_port" HorizontalAlignment="Left" Margin="68,467,0,0" VerticalAlignment="Top" Width="120"/>-->
-                    <TextBox x:Name="txt_addarea" HorizontalAlignment="Left" Height="23" Margin="328,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
-                    <Button x:Name="btn_addArea" Content="添加网络" HorizontalAlignment="Left" Margin="220,50,0,0" VerticalAlignment="Top" Width="75" Click="btn_addArea_Click" Grid.Column="1"/>
-                    <Label x:Name="label9_Copy" Content="设备ID：" HorizontalAlignment="Left" Margin="220,82,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <Label x:Name="label9_Copy1" Content="设备名称：" HorizontalAlignment="Left" Margin="220,113,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <Label x:Name="label9_Copy2" Content="选择网络：" HorizontalAlignment="Left" Margin="220,147,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <TextBox x:Name="txt_eqId" HorizontalAlignment="Left" Height="23" Margin="328,84,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
-                    <TextBox x:Name="txt_eqName" HorizontalAlignment="Left" Height="23" Margin="328,116,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
-                    <ComboBox x:Name="cmb_eqArea" HorizontalAlignment="Left" Margin="328,150,0,0" VerticalAlignment="Top" Width="110" Grid.Column="1"/>
-                    <Button x:Name="btn_addEq" Content="添加设备" HorizontalAlignment="Left" Margin="220,185,0,0" VerticalAlignment="Top" Width="75" Click="btn_addEq_Click" Grid.Column="1"/>
-                    <Button x:Name="btn_del" Content="删除设备（网络）" HorizontalAlignment="Left" Margin="331,185,0,0" VerticalAlignment="Top" Width="104" Click="btn_del_Click_1" Grid.Column="1"/>
-                    <!--<Button x:Name="btn_send" Content="测试" HorizontalAlignment="Left" Margin="301,498,0,0" VerticalAlignment="Top" Width="75" Click="btn_send_Click" Grid.ColumnSpan="2"/>-->
-                    <!--<TextBox x:Name="txt_send" HorizontalAlignment="Left" Height="23" Margin="10,495,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="286"/>
-                    <ScrollViewer Name="scrollViewer2" Width="386" VerticalScrollBarVisibility="Auto" Margin="10,523,0,0" HorizontalAlignment="Left" Grid.ColumnSpan="2">
-                        <TextBlock x:Name="txt_recv" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="366" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-                    </ScrollViewer>-->
-                    <TreeView Margin="511,50,0,0" Name="tv_cmd" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="672" Grid.Column="1">
+
+                    <TreeView Margin="820,50,0,0" Name="tv_cmd" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="672">
                     </TreeView>
-                    <Label x:Name="label9_Copy6" Content="中心频点(M)：" HorizontalAlignment="Left" Margin="220,280,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <Label x:Name="label9_Copy3" Content="扩展因子SF：" HorizontalAlignment="Left" Margin="220,313,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <Label x:Name="label9_Copy4" Content="带宽BW：" HorizontalAlignment="Left" Margin="220,344,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <Label x:Name="label9_Copy5" Content="编码速率CR：" HorizontalAlignment="Left" Margin="220,375,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <Label x:Name="label9_Copy7" Content="低码率优化：" HorizontalAlignment="Left" Margin="220,403,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <Label x:Name="label9_Copy8" Content="射频功率：" HorizontalAlignment="Left" Margin="220,434,0,0" VerticalAlignment="Top" Grid.Column="1"/>
-                    <TextBox x:Name="txt_fre" HorizontalAlignment="Left" Height="23" Margin="331,280,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
-                    <ComboBox x:Name="txt_SF" HorizontalAlignment="Left" Height="23" Margin="331,311,0,0" Width="107" VerticalAlignment="Top" Grid.Column="1"></ComboBox>
-                    <!--<TextBox x:Name="txt_rate" HorizontalAlignment="Left" Height="23" Margin="331,311,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>-->
-                    <ComboBox x:Name="txt_BW" HorizontalAlignment="Left" Height="23" Margin="331,342,0,0" Width="107" VerticalAlignment="Top" Grid.Column="1"></ComboBox>
-                    <!--<TextBox x:Name="txt_RF" HorizontalAlignment="Left" Height="23" Margin="331,342,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>-->
-                    <ComboBox x:Name="txt_rate" HorizontalAlignment="Left" Height="23" Margin="331,374,0,0" Width="107" VerticalAlignment="Top" Grid.Column="1"></ComboBox>
-                    <!--<TextBox x:Name="txt_SF1" HorizontalAlignment="Left" Height="23" Margin="331,374,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>-->
-                    <!--<TextBox x:Name="txt_BW1" HorizontalAlignment="Left" Height="23" Margin="330,405,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>-->
-                    <CheckBox x:Name="txt_uhua" Content="是" Grid.Column="1" HorizontalAlignment="Left" Margin="331,409,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="txt_enc" HorizontalAlignment="Left" Height="23" Margin="331,436,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" Grid.Column="1"/>
-                    <Button x:Name="btn_read_def" IsEnabled="False" Content="测试" HorizontalAlignment="Left" Margin="148,474,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_def_Click" Grid.Column="1"/>
-                    <Button x:Name="btn_read" IsEnabled="False" Content="读取" HorizontalAlignment="Left" Margin="255,475,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_Click" Grid.Column="1"/>
-                    <Button x:Name="btn_set" Content="设置" HorizontalAlignment="Left" Margin="363,475,0,0" VerticalAlignment="Top" Width="75" Click="btn_set_Click" Grid.Column="1"/>
+                    <Label x:Name="label9_Copy6" Content="中心频点(M)：" HorizontalAlignment="Left" Margin="50,400,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy3" Content="扩展因子SF：" HorizontalAlignment="Left" Margin="50,440,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy4" Content="带宽BW：" HorizontalAlignment="Left" Margin="50,480,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy5" Content="编码速率CR：" HorizontalAlignment="Left" Margin="50,520,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy7" Content="低码率优化：" HorizontalAlignment="Left" Margin="50,560,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy8" Content="射频功率：" HorizontalAlignment="Left" Margin="50,600,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_fre" HorizontalAlignment="Left" Height="23" Margin="150,402,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107" />
+                    <ComboBox x:Name="txt_SF" HorizontalAlignment="Left" Height="23" Margin="150,442,0,0" Width="107" VerticalAlignment="Top" ></ComboBox>
+                    <ComboBox x:Name="txt_BW" HorizontalAlignment="Left" Height="23" Margin="150,482,0,0" Width="107" VerticalAlignment="Top"></ComboBox>
+                    <ComboBox x:Name="txt_rate" HorizontalAlignment="Left" Height="23" Margin="150,522,0,0" Width="107" VerticalAlignment="Top"></ComboBox>
+                    <CheckBox x:Name="txt_uhua" Content="是" HorizontalAlignment="Left" Margin="150,562,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_enc" HorizontalAlignment="Left" Height="23" Margin="150,602,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107"/>
+                    <Button x:Name="btn_read_def" IsEnabled="False" Content="测试" HorizontalAlignment="Left" Margin="57,640,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_def_Click" />
+                    <Button x:Name="btn_read" IsEnabled="False" Content="读取" HorizontalAlignment="Left" Margin="230,640,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_Click" />
+                    <Button x:Name="btn_set" Content="设置" HorizontalAlignment="Left" Margin="331,640,0,0" VerticalAlignment="Top" Width="75" Click="btn_set_Click" />
+                    <Rectangle Fill="#00F4F4F5" HorizontalAlignment="Left" Height="340" Margin="38,382,0,0" Stroke="#FF7A7979" VerticalAlignment="Top" Width="384" Panel.ZIndex="9"/>
+                    
+                    <Label x:Name="label9_Copy9" Content="网络ID：" HorizontalAlignment="Left" Margin="600,50,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy10" Content="网络名称：" HorizontalAlignment="Left" Margin="600,100,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_addarea" HorizontalAlignment="Left" Height="23" Margin="702,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107"/>
+                    <TextBox x:Name="txt_addareaID" HorizontalAlignment="Left" Height="23" Margin="702,50,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107"/>
+                    <Button x:Name="btn_addArea" Content="添加网络" HorizontalAlignment="Left" Margin="600,150,0,0" VerticalAlignment="Top" Width="75" Click="btn_addArea_Click"/>
+                    <Label x:Name="label9_Copy" Content="设备ID：" HorizontalAlignment="Left" Margin="600,200,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy1" Content="设备名称：" HorizontalAlignment="Left" Margin="600,250,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy2" Content="选择网络：" HorizontalAlignment="Left" Margin="600,300,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_eqId" HorizontalAlignment="Left" Height="23" Margin="700,202,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107"/>
+                    <TextBox x:Name="txt_eqName" HorizontalAlignment="Left" Height="23" Margin="700,252,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107"/>
+                    <ComboBox x:Name="cmb_eqArea" HorizontalAlignment="Left" Margin="700,302,0,0" VerticalAlignment="Top" Width="110"/>
+                    <Button x:Name="btn_addEq" Content="添加设备" HorizontalAlignment="Left" Margin="600,350,0,0" VerticalAlignment="Top" Width="75" Click="btn_addEq_Click"/>
+                    <Button x:Name="btn_del" Content="删除设备（网络）" HorizontalAlignment="Left" Margin="700,350,0,0" VerticalAlignment="Top" Width="104" Click="btn_del_Click_1"/>
                 </Grid>
             </TabItem>
         </TabControl>

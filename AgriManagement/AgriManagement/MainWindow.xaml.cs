@@ -39,6 +39,13 @@ namespace AgriManagement
         double _maxN = Config.maxN;
         double _minN = Config.minN;
 
+        double _isShow_temp = Config.showT;
+        double _isShow_moist = Config.showM;
+        double _isShow_ch3 = Config.showC;
+        double _isShow_earth_temp = Config.showD1;
+        double _isShow_earth_moist = Config.showD2;
+        double _isShow_intensity = Config.showD3;
+
         double _DivT = Config.DivT;
         double _DivM = Config.DivM;
         double _DivN = Config.DivN;
@@ -51,7 +58,6 @@ namespace AgriManagement
         //double _freq_data = Config.freq_data;
         //double _freq_chat = Config.freq_chat;
         double _freq_data = 2;
-        double _freq_chat = 4;
 
         double _retry = Config.retry;
         double _play = Config.play;
@@ -71,12 +77,11 @@ namespace AgriManagement
         CloudAdapter _cloud = new CloudAdapter();
         DeviceBill _bill;
 
-        int sensorCount = 2;
         int _maxHistorys = 8640;//one days
         int _maxShow = 360;//one days
 
         Dictionary<string, Item> items = new Dictionary<string, Item>();
-        Dictionary<string, List<History>> cloudData = new Dictionary<string, List<History>>();
+        Dictionary<string, Item> cloudData = new Dictionary<string, Item>();
 
         Dictionary<string, bool> _checkShow = new Dictionary<string, bool>();
         Dictionary<string, bool> _errorList = new Dictionary<string, bool>();
@@ -98,46 +103,12 @@ namespace AgriManagement
             InitSensors();
             initUI();
 
-
+            //_cloud.PostInsertUser("testID", "testPwd", "testNN");
             start();
 
 
         }
-
-        private void testInitData()
-        {
-            DateTime start = DateTime.Now.AddDays(-30);
-            DateTime end = DateTime.Now;
-            InitSensors();
-
-            while (start < end)
-            {
-                for (int i = 0; i < sensorCount; i++)
-                {
-                    History it = new History();
-                    if (_device.updateSensorData(i.ToString(), ref it))//do device update
-                    {
-                        if (items.ContainsKey(i.ToString()))
-                        {
-                            it.time = start;
-                            items[i.ToString()].status = Status.OnLine;
-                            items[i.ToString()].historys.Add(it);
-                        }
-                    }
-                    else
-                    {
-                        if (items.ContainsKey(i.ToString()))
-                        {
-                            it.time = start;
-                            items[i.ToString()].status = Status.OffLine;
-                            items[i.ToString()].historys.Add(it);
-                            cloudData[i.ToString()].Add(it);                     
-                        }
-                    }
-                }
-                start = start.AddMinutes(5);
-            }
-        }
+        
         public History CopyHistory(History h)
         {
             History hnew = new History();
@@ -171,37 +142,12 @@ namespace AgriManagement
             txt_update.Text = _i_updateUser;
             #endregion
 
-            //#region serial port
-            ////列出常用的波特率
-            ////cob_port.Items.Add("9600");
-            ////cob_port.Items.Add("19200");
-            ////cob_port.Items.Add("56000");
-            ////cob_port.Items.Add("115200");
-            ////cob_port.SelectedIndex = StaticTools.getPortindex(port);
 
-
-            ////for (int i = 0; i < 25; i++)
-            ////{
-            ////    try
-            ////    {
-            ////        SerialPort sp = new SerialPort("COM" + (i + 1).ToString());
-            ////        sp.Open();
-            ////        sp.Close();
-            ////        cob_coms.Items.Add("COM" + (i + 1).ToString());
-            ////        _device.setPortName("COM" + (i + 1).ToString());
-            ////    }
-            ////    catch (System.Exception ex)
-            ////    {
-            ////        continue;
-            ////    }
-            ////}
-            ////if (cob_coms.Items.Count > 0)
-            ////    cob_coms.SelectedIndex = 0;
-            //#endregion
 
             #region init history Page
+            List<string> areaListShow = StaticTools.GetAllAreaShow();
             List<string> areaList = StaticTools.GetAllArea();
-            foreach (string s in areaList)
+            foreach (string s in areaListShow)
             {
                 cmb_eqArea.Items.Add(s);
             }
@@ -210,6 +156,18 @@ namespace AgriManagement
 
             if (_play == 1) cb_play.IsChecked = true;
             else cb_play.IsChecked = false;
+            if (_isShow_temp == 1) cb_temp.IsChecked = true;
+            else cb_temp.IsChecked = false;
+            if (_isShow_moist == 1) cb_moist.IsChecked = true;
+            else cb_moist.IsChecked = false;
+            if (_isShow_ch3 == 1) cb_ch3.IsChecked = true;
+            else cb_ch3.IsChecked = false;
+            if (_isShow_earth_temp == 1) cb_data1.IsChecked = true;
+            else cb_data1.IsChecked = false;
+            if (_isShow_earth_moist == 1) cb_data2.IsChecked = true;
+            else cb_data2.IsChecked = false;
+            if (_isShow_intensity == 1) cb_data3.IsChecked = true;
+            else cb_data3.IsChecked = false;
             #endregion
 
             txt_SF.Items.Add("6");
@@ -418,213 +376,9 @@ namespace AgriManagement
                         index++;
                         });
                     }
-                    //TreeViewItem newChild = new TreeViewItem();
-                    //newChild.Header = areaList[0] + "网络";
-
-                    //StackPanel sp1 = new StackPanel();
-                    //sp1.Orientation = Orientation.Horizontal;
-                    //sp1.Height = 40;
-
-                    //TreeViewItem newChildnode1 = new TreeViewItem();
-                    //newChildnode1.Header = "工控端：";
-                    //newChildnode1.VerticalAlignment = VerticalAlignment.Center;
-                    //Ellipse blueRectangle1 = new Ellipse();
-                    //blueRectangle1.Height = 15;
-                    //blueRectangle1.Width = 15;
-
-                    //SolidColorBrush blueBrush1 = new SolidColorBrush();
-                    //blueBrush1.Color = Colors.Blue;
-                    //blueRectangle1.StrokeThickness = 1;
-                    //blueRectangle1.Stroke = blueBrush1;
-                    //blueRectangle1.Fill = blueBrush1;
-
-                    //sp1.Children.Add(newChildnode1);
-                    //sp1.Children.Add(blueRectangle1);
-                    //newChild.Items.Add(sp1);
-
-                    //List<string> nodelist = new List<string>();
-                    //nodelist = StaticTools.GetAllNodesByArea(areaList[0]);
-                    //foreach (string s1 in nodelist)
-                    //{
-                    //    StackPanel sp = new StackPanel();
-                    //    sp.Orientation = Orientation.Horizontal;
-                    //    sp.Height = 40;
-
-                    //    TreeViewItem newChildnode = new TreeViewItem();
-                    //    newChildnode.Header = "编号：" + s1 + " 状态：";
-                    //    newChildnode.VerticalAlignment = VerticalAlignment.Center;
-                    //    Ellipse blueRectangle = new Ellipse();
-                    //    blueRectangle.Height = 15;
-                    //    blueRectangle.Width = 15;
-
-                    //    SolidColorBrush blueBrush = new SolidColorBrush();
-                    //    blueBrush.Color = Colors.Blue;
-                    //    blueRectangle.StrokeThickness = 1;
-                    //    blueRectangle.Stroke = blueBrush;
-                    //    blueRectangle.Fill = blueBrush;
-
-                    //    sp.Children.Add(newChildnode);
-                    //    sp.Children.Add(blueRectangle);
-                    //    newChild.Items.Add(sp);
-                    //}
-                    //tv_status1.Items.Add(newChild);
-                    //ExpandInternal(tv_status1);
-
-                    //newChild = new TreeViewItem();
-                    //newChild.Header = areaList[1] + "网络";
-
-                    //sp1 = new StackPanel();
-                    //sp1.Orientation = Orientation.Horizontal;
-                    //sp1.Height = 40;
-
-                    //newChildnode1 = new TreeViewItem();
-                    //newChildnode1.Header = "工控端：";
-                    //newChildnode1.VerticalAlignment = VerticalAlignment.Center;
-                    //blueRectangle1 = new Ellipse();
-                    //blueRectangle1.Height = 15;
-                    //blueRectangle1.Width = 15;
-
-                    //blueBrush1 = new SolidColorBrush();
-                    //blueBrush1.Color = Colors.Blue;
-                    //blueRectangle1.StrokeThickness = 1;
-                    //blueRectangle1.Stroke = blueBrush1;
-                    //blueRectangle1.Fill = blueBrush1;
-
-                    //sp1.Children.Add(newChildnode1);
-                    //sp1.Children.Add(blueRectangle1);
-                    //newChild.Items.Add(sp1);
-
-                    //nodelist = new List<string>();
-                    //nodelist = StaticTools.GetAllNodesByArea(areaList[1]);
-                    //foreach (string s1 in nodelist)
-                    //{
-                    //    StackPanel sp = new StackPanel();
-                    //    sp.Orientation = Orientation.Horizontal;
-                    //    sp.Height = 40;
-
-                    //    TreeViewItem newChildnode = new TreeViewItem();
-                    //    newChildnode.Header = "编号：" + s1 + " 状态：";
-                    //    newChildnode.VerticalAlignment = VerticalAlignment.Center;
-                    //    Ellipse blueRectangle = new Ellipse();
-                    //    blueRectangle.Height = 15;
-                    //    blueRectangle.Width = 15;
-                    //    SolidColorBrush blueBrush = new SolidColorBrush();
-                    //    blueBrush.Color = Colors.Blue;
-                    //    blueRectangle.StrokeThickness = 1;
-                    //    blueRectangle.Stroke = blueBrush;
-                    //    blueRectangle.Fill = blueBrush;
-
-                    //    sp.Children.Add(newChildnode);
-                    //    sp.Children.Add(blueRectangle);
-                    //    newChild.Items.Add(sp);
-                    //}
-                    //tv_status2.Items.Add(newChild);
-                    //ExpandInternal(tv_status2);
-
-                    //newChild = new TreeViewItem();
-                    //newChild.Header = areaList[2] + "网络";
-
-                    //sp1 = new StackPanel();
-                    //sp1.Orientation = Orientation.Horizontal;
-                    //sp1.Height = 40;
-
-                    //newChildnode1 = new TreeViewItem();
-                    //newChildnode1.Header = "工控端：";
-                    //newChildnode1.VerticalAlignment = VerticalAlignment.Center;
-                    //blueRectangle1 = new Ellipse();
-                    //blueRectangle1.Height = 15;
-                    //blueRectangle1.Width = 15;
-
-                    //blueBrush1 = new SolidColorBrush();
-                    //blueBrush1.Color = Colors.Blue;
-                    //blueRectangle1.StrokeThickness = 1;
-                    //blueRectangle1.Stroke = blueBrush1;
-                    //blueRectangle1.Fill = blueBrush1;
-
-                    //sp1.Children.Add(newChildnode1);
-                    //sp1.Children.Add(blueRectangle1);
-                    //newChild.Items.Add(sp1);
-
-                    //nodelist = new List<string>();
-                    //nodelist = StaticTools.GetAllNodesByArea(areaList[2]);
-                    //foreach (string s1 in nodelist)
-                    //{
-                    //    StackPanel sp = new StackPanel();
-                    //    sp.Orientation = Orientation.Horizontal;
-                    //    sp.Height = 40;
-
-                    //    TreeViewItem newChildnode = new TreeViewItem();
-                    //    newChildnode.Header = "编号：" + s1 + " 状态：";
-                    //    newChildnode.VerticalAlignment = VerticalAlignment.Center;
-                    //    Ellipse blueRectangle = new Ellipse();
-                    //    blueRectangle.Height = 15;
-                    //    blueRectangle.Width = 15;
-                    //    SolidColorBrush blueBrush = new SolidColorBrush();
-                    //    blueBrush.Color = Colors.Blue;
-                    //    blueRectangle.StrokeThickness = 1;
-                    //    blueRectangle.Stroke = blueBrush;
-                    //    blueRectangle.Fill = blueBrush;
-
-                    //    sp.Children.Add(newChildnode);
-                    //    sp.Children.Add(blueRectangle);
-                    //    newChild.Items.Add(sp);
-                    //}
-                    //tv_status3.Items.Add(newChild);
-                    //ExpandInternal(tv_status3);
-
-                    //newChild = new TreeViewItem();
-                    //newChild.Header = areaList[3] + "网络";
-
-                    //sp1 = new StackPanel();
-                    //sp1.Orientation = Orientation.Horizontal;
-                    //sp1.Height = 40;
-
-                    //newChildnode1 = new TreeViewItem();
-                    //newChildnode1.Header = "工控端：";
-                    //newChildnode1.VerticalAlignment = VerticalAlignment.Center;
-                    //blueRectangle1 = new Ellipse();
-                    //blueRectangle1.Height = 15;
-                    //blueRectangle1.Width = 15;
-
-                    //blueBrush1 = new SolidColorBrush();
-                    //blueBrush1.Color = Colors.Blue;
-                    //blueRectangle1.StrokeThickness = 1;
-                    //blueRectangle1.Stroke = blueBrush1;
-                    //blueRectangle1.Fill = blueBrush1;
-
-                    //sp1.Children.Add(newChildnode1);
-                    //sp1.Children.Add(blueRectangle1);
-                    //newChild.Items.Add(sp1);
-
-                    //nodelist = new List<string>();
-                    //nodelist = StaticTools.GetAllNodesByArea(areaList[3]);
-                    //foreach (string s1 in nodelist)
-                    //{
-                    //    StackPanel sp = new StackPanel();
-                    //    sp.Orientation = Orientation.Horizontal;
-                    //    sp.Height = 40;
-
-                    //    TreeViewItem newChildnode = new TreeViewItem();
-                    //    newChildnode.Header = "编号：" + s1 + " 状态：";
-                    //    newChildnode.VerticalAlignment = VerticalAlignment.Center;
-                    //    Ellipse blueRectangle = new Ellipse();
-                    //    blueRectangle.Height = 15;
-                    //    blueRectangle.Width = 15;
-                    //    SolidColorBrush blueBrush = new SolidColorBrush();
-                    //    blueBrush.Color = Colors.Blue;
-                    //    blueRectangle.StrokeThickness = 1;
-                    //    blueRectangle.Stroke = blueBrush;
-                    //    blueRectangle.Fill = blueBrush;
-
-                    //    sp.Children.Add(newChildnode);
-                    //    sp.Children.Add(blueRectangle);
-                    //    newChild.Items.Add(sp);
-                    //}
-                    //tv_status4.Items.Add(newChild);
-                    //ExpandInternal(tv_status4);
                 }
             }
-            catch(Exception ex)
+            catch
             {
 
             }
@@ -668,9 +422,10 @@ namespace AgriManagement
                     item.ErrorCount = 0;
                     item.lastStatus = Status.Regular;
                     items.Add(item.id.ToString(), item);
-                    cloudData.Add(item.id.ToString(), ls1);
                 }
             }
+
+            cloudData = new Dictionary<string, Item>(items);
         }
 
         private void start()
@@ -746,7 +501,7 @@ namespace AgriManagement
                     //updateTable(_historyID);
                     Thread.Sleep((int)this._freq_data * 1000);
                 }
-                catch (Exception ex)
+                catch
                 { }
             }
         }
@@ -1286,7 +1041,7 @@ namespace AgriManagement
                             });
                         }
                     }
-                    catch (Exception ex)
+                    catch
                     { }
                 }
             }
@@ -1300,14 +1055,14 @@ namespace AgriManagement
                 int leftoff = 0;
                 int topoff = 20;
                 int width = 300;
-                int heigh = 100;
+                int heigh = 120;
 
                 int count = cav_show.Children.Count;
                 for (int i = 0; i < count; i++)
                 {
                     cav_show.Children.RemoveAt(0);
                 }
-                cav_show.Height = 600;
+                cav_show.Height = 400;
                 foreach (string key in _checkShow.Keys)
                 {
                     if (_checkShow[key])
@@ -1344,11 +1099,60 @@ namespace AgriManagement
                                         tb.Background = Brushes.Gray;
                                     }
 
-                                    tb.Text = string.Format("{0}号设备\n\r 温度：{1}·C    湿度：{2}",
-                                        items[i].historys[index - 1].id.ToString(),
-                                        items[i].historys[index - 1].temperature.ToString(),
-                                        items[i].historys[index - 1].moisture.ToString(),
-                                        items[i].historys[index - 1].NH.ToString());
+                                    int itemCount = 0;
+
+                                    string str = items[i].historys[index - 1].id.ToString() + "号设备";
+                                    if (_isShow_temp == 1)
+                                    {
+                                        if (itemCount % 2 == 0)
+                                            str += "\n";
+                                        else str += "        ";
+                                        str += "温度：" + items[i].historys[index - 1].temperature.ToString() + "·C";
+                                        itemCount++;
+                                    }
+                                    if (_isShow_moist == 1)
+                                    {
+                                        if (itemCount % 2 == 0)
+                                            str += "\n";
+                                        else str += "        ";
+                                        str += "湿度：" + items[i].historys[index - 1].moisture.ToString() + "";
+                                        itemCount++;
+                                    }
+                                    if (_isShow_ch3 == 1)
+                                    {
+                                        if (itemCount % 2 == 0)
+                                            str += "\n";
+                                        else str += "        ";
+                                        str += "氨气：" + items[i].historys[index - 1].NH.ToString() + "";
+                                        itemCount++;
+                                    }
+                                    if (_isShow_intensity == 1)
+                                    {
+                                        if (itemCount % 2 == 0)
+                                            str += "\n";
+                                        else str += "        ";
+                                        str += "光强：" + items[i].historys[index - 1].data3.ToString() + "";
+                                        itemCount++;
+                                    }
+                                    if (_isShow_earth_temp == 1)
+                                    {
+                                        if (itemCount % 2 == 0)
+                                            str += "\n";
+                                        else str += "        ";
+                                        str += "土壤温度：" + items[i].historys[index - 1].data1.ToString() + "·C";
+                                        itemCount++;
+                                    }
+                                    if (_isShow_earth_moist == 1)
+                                    {
+                                        if (itemCount % 2 == 0)
+                                            str += "\n";
+                                        else str += "        ";
+                                        str += "土壤湿度：" + items[i].historys[index - 1].data2.ToString() + "";
+                                        itemCount++;
+                                    }
+
+
+                                    tb.Text = str;
                                     tb.Height = heigh;
                                     tb.Width = width;
                                     tb.FontSize = 20;
@@ -1451,7 +1255,6 @@ namespace AgriManagement
                         Console.WriteLine("data length not fit!!!!!!Length is "+data.Length);
                         return;
                     }
-                    int index = 7;
                     int id = 1;
                     for (int i = 7; i < data.Length - 2; i = i + 16)
                     {
@@ -1543,7 +1346,7 @@ namespace AgriManagement
                     }
                 }
             }
-            catch (Exception ex)
+            catch
             { }
         }
 
@@ -1609,8 +1412,7 @@ namespace AgriManagement
             cav_history.Dispatcher.Invoke(() =>
             {
                 double top = 25;
-                double left = 25;
-                double width = 1000;
+
                 double heigh = 520;
 
                 if (dir.Count > 0)
@@ -1670,6 +1472,30 @@ namespace AgriManagement
         {
             try
             {
+                if (cb_temp.IsChecked == true) _isShow_temp = 1;
+                else _isShow_temp = 0;
+                if (cb_moist.IsChecked == true) _isShow_moist = 1;
+                else _isShow_moist = 0;
+                if (cb_ch3.IsChecked == true) _isShow_ch3 = 1;
+                else _isShow_ch3 = 0;
+                if (cb_data1.IsChecked == true) _isShow_earth_temp = 1;
+                else _isShow_earth_temp = 0;
+                if (cb_data2.IsChecked == true) _isShow_earth_moist = 1;
+                else _isShow_earth_moist = 0;
+                if (cb_data3.IsChecked == true) _isShow_intensity = 1;
+                else _isShow_intensity = 0;
+
+                StaticTools.SaveConfig("showT", _isShow_temp.ToString());
+                StaticTools.SaveConfig("showM", _isShow_moist.ToString());
+                StaticTools.SaveConfig("showC", _isShow_ch3.ToString());
+                StaticTools.SaveConfig("showD1", _isShow_earth_temp.ToString());
+                StaticTools.SaveConfig("showD2", _isShow_earth_moist.ToString());
+                StaticTools.SaveConfig("showD3", _isShow_intensity.ToString());
+
+                if (cb_play.IsChecked == true) _play = 1;
+                else _play = 0;
+                StaticTools.SaveConfig("play", _play.ToString());
+
                 double maxT = Convert.ToDouble(txt_temp_max.Text);
                 this._maxT = maxT;
                 StaticTools.SaveConfig("maxT", maxT.ToString());
@@ -1711,7 +1537,7 @@ namespace AgriManagement
 
                 MessageBox.Show("修改成功！");
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("修改错误，请检查输入是否为数字！");
             }
@@ -1730,10 +1556,12 @@ namespace AgriManagement
                 //StaticTools.SaveConfig("port", StaticTools.getPortvalue(cob_port.SelectedIndex).ToString());
                 if (cb_play.IsChecked == true) _play = 1;
                 else _play = 0;
+
                 StaticTools.SaveConfig("play", _play.ToString());
+
                 MessageBox.Show("修改成功！");
             }
-            catch (Exception ex)
+            catch
             {
             }
         }
@@ -1880,10 +1708,18 @@ namespace AgriManagement
 
         private void btn_addEq_Click(object sender, RoutedEventArgs e)
         {
-            int areaid = StaticTools.getAreaNewID();
             string id = txt_eqId.Text;
+
+            try { int temp = Convert.ToInt32(id); }
+            catch
+            {
+                MessageBox.Show("请用数字标注设备ID！");
+                return;
+            }
+
             string name = txt_eqName.Text;
-            string area = cmb_eqArea.SelectedValue.ToString();
+            string area = cmb_eqArea.SelectedValue.ToString().Split('(')[0];
+            string areaid = cmb_eqArea.SelectedValue.ToString().Split('(')[1].Split(')')[0];
             if (string.IsNullOrEmpty(id))
             {
                 MessageBox.Show("id不能为空！");
@@ -1899,6 +1735,20 @@ namespace AgriManagement
                 MessageBox.Show("请先添加区域！");
                 return;
             }
+
+            try {
+                List<int> list = new List<int>();
+                int _list_id = Convert.ToInt32(areaid) * 100 + Convert.ToInt32(id);
+                list.Add(_list_id);
+                //if (!_bill.AddBSList(list))
+                //{
+                //    MessageBox.Show("设备更新失败，请检查设备是否连接！");
+                //    return;
+                //}
+            }
+            catch { MessageBox.Show("故障！"); }
+
+
             StaticTools.AddNode(areaid,area, id, name);
             update_cmd();
             MessageBox.Show("添加成功！");
@@ -1930,21 +1780,33 @@ namespace AgriManagement
 
         private void btn_addArea_Click(object sender, RoutedEventArgs e)
         {
-            int id = StaticTools.getAreaNewID();
+            try { int temp = Convert.ToInt32(txt_addareaID.Text); }
+            catch
+            {
+                MessageBox.Show("请用数字标注网络ID！");
+                return;
+            }
+
+            int id = StaticTools.getAreaNewID(txt_addareaID.Text);
 
             if (id < 0)
             {
                 MessageBox.Show("网络数量已达到最大！");
                 return;
             }
+            else if (id == 0)
+            {
+                MessageBox.Show("网络ID重复，请更换！");
+                return;
+            }
 
-            StaticTools.AddArea(txt_addarea.Text.ToString(), id);
+            StaticTools.AddArea(txt_addarea.Text.ToString(), txt_addareaID.Text.ToString());
             int count = cmb_eqArea.Items.Count;
             for (int i = 0; i < count; i++)
             {
                 cmb_eqArea.Items.RemoveAt(0);
             }
-            List<string> areas = StaticTools.GetAllArea();
+            List<string> areas = StaticTools.GetAllAreaShow();
             foreach (string s in areas)
             {
                 cmb_eqArea.Items.Add(s);
@@ -2005,7 +1867,7 @@ namespace AgriManagement
 
                         MessageBox.Show("操作成功！");
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         MessageBox.Show("错误！");
                     }
@@ -2026,29 +1888,29 @@ namespace AgriManagement
 
         private void btn_read_def_Click(object sender, RoutedEventArgs e)
         {
-            List<int> data = new List<int>();
-            List<double[]> data1 = new List<double[]>();
-            List<int> data2 = new List<int>();
-            int data3 = 0;
-            double[] data4;
-            data.Add(0202);
-            data.Add(0203);
-            int id = 203;
-            int id1 = 205;
+            //List<int> data = new List<int>();
+            //List<double[]> data1 = new List<double[]>();
+            //List<int> data2 = new List<int>();
+            //int data3 = 0;
+            //double[] data4;
+            //data.Add(0202);
+            //data.Add(0203);
+            //int id = 203;
+            //int id1 = 205;
             bool result = false;
 
-            int freq = 430000000;
-            int bw = 7;
-            int sf = 10;
-            int rc = 2;
-            int check = 0;
-            int enc = 20;
+            //int freq = 430000000;
+            //int bw = 7;
+            //int sf = 10;
+            //int rc = 2;
+            //int check = 0;
+            //int enc = 20;
 
-            int len = 200;
-            int addr = 0x40;
+            //int len = 200;
+            //int addr = 0x40;
 
-            List<byte> ds = new List<byte>();
-            ds.Add(0x80);
+            //List<byte> ds = new List<byte>();
+            //ds.Add(0x80);
             //ds.Add(0x01);
             
             //result = _bill.DeleteNodeList();
@@ -2211,7 +2073,7 @@ namespace AgriManagement
                     MessageBox.Show("操作成功！");
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 //MessageBox.Show(ex.Message);
             }
@@ -2241,7 +2103,7 @@ namespace AgriManagement
                     MessageBox.Show("操作成功！");
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 //MessageBox.Show(ex.Message);
             }

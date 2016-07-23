@@ -189,7 +189,45 @@ namespace AgriManagement.tools
 
             var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
         }
+        public async void PostInsertUser(string id, string pwd, string name)//temp[0]返回网页temp[1]返回cookies
+        {
+            String chatUrl = "http://115.29.137.121/api/user/add";
 
+            TimeSpan ts1 = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            string ts = Convert.ToInt64(ts1.TotalSeconds).ToString();
+
+
+            string data = "[{\"userId\":\"" + id + "\",\"passwd\":\"" + pwd + "\",\"nickName\":\"" + name + "\",\"addTime\":" + ts + "}]";
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    using (var content =
+                        new MultipartFormDataContent("Upload----" + DateTime.Now.ToString(CultureInfo.InvariantCulture)))
+                    {
+                        byte[] data1 = Encoding.UTF8.GetBytes("kevin");
+                        content.Add(new StreamContent(new MemoryStream(data1)), "sign");
+                        byte[] data2 = Encoding.UTF8.GetBytes("0");
+                        content.Add(new StreamContent(new MemoryStream(data2)), "businessid");
+                        byte[] data3 = Encoding.UTF8.GetBytes(data);
+                        content.Add(new StreamContent(new MemoryStream(data3)), "data");
+
+                        using (
+                           var message =
+                               await client.PostAsync(chatUrl, content))
+                        {
+                            var input = await message.Content.ReadAsStringAsync();
+
+                            var asd = !string.IsNullOrWhiteSpace(input) ? Regex.Match(input, @"http://\w*\.directupload\.net/images/\d*/\w*\.[a-z]{3}").Value : null;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
         public async void PostMethodMulti(string id, double temp, double mosit, double NH)//temp[0]返回网页temp[1]返回cookies
         {
             String chatUrl = "http://115.29.137.121/api/datacube/upload";

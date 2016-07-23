@@ -26,6 +26,9 @@ namespace AgriManagement.tools
         public double temperature { get; set; }
         public double moisture { get; set; }
         public double NH { get; set; }
+        public double data1 { get; set; }
+        public double data2 { get; set; }
+        public double data3 { get; set; }
         public Status status { get; set; }
     }
 
@@ -65,7 +68,6 @@ namespace AgriManagement.tools
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
         protected void NotifyCollectionChanged(String info)

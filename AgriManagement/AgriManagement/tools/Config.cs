@@ -195,5 +195,60 @@ namespace AgriManagement.tools
                 ConfigurationManager.AppSettings["play"] = value.ToString();
             }
         }
+
+        static String _showT = ConfigurationManager.AppSettings["showT"];
+        public static int showT
+        {
+            get { return Convert.ToInt32(_showT); }
+            set
+            {
+                ConfigurationManager.AppSettings["showT"] = value.ToString();
+            }
+        }
+        static String _showM = ConfigurationManager.AppSettings["showM"];
+        public static int showM
+        {
+            get { return Convert.ToInt32(_showM); }
+            set
+            {
+                ConfigurationManager.AppSettings["showM"] = value.ToString();
+            }
+        }
+        static String _showC = ConfigurationManager.AppSettings["showC"];
+        public static int showC
+        {
+            get { return Convert.ToInt32(_showC); }
+            set
+            {
+                ConfigurationManager.AppSettings["showC"] = value.ToString();
+            }
+        }
+        static String _showD1 = ConfigurationManager.AppSettings["showD1"];
+        public static int showD1
+        {
+            get { return Convert.ToInt32(_showD1); }
+            set
+            {
+                ConfigurationManager.AppSettings["showD1"] = value.ToString();
+            }
+        }
+        static String _showD2 = ConfigurationManager.AppSettings["showD2"];
+        public static int showD2
+        {
+            get { return Convert.ToInt32(_showD2); }
+            set
+            {
+                ConfigurationManager.AppSettings["showD2"] = value.ToString();
+            }
+        }
+        static String _showD3 = ConfigurationManager.AppSettings["showD3"];
+        public static int showD3
+        {
+            get { return Convert.ToInt32(_showD3); }
+            set
+            {
+                ConfigurationManager.AppSettings["showD3"] = value.ToString();
+            }
+        }
     }
 }

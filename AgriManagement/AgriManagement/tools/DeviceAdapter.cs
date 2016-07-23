@@ -135,7 +135,7 @@ namespace AgriManagement.tools
                     if (count > 20) return null;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 if (null == reconnect())
                     return null;

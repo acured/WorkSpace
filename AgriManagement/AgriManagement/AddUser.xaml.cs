@@ -46,11 +46,6 @@ namespace AgriManagement
                 MessageBox.Show("账号ID不能为空！");
                 return;
             }
-            if (txt_username.Text == "")
-            {
-                MessageBox.Show("用户名不能为空！");
-                return;
-            }
             if (txt_nickname.Text == "")
             {
                 MessageBox.Show("昵称不能为空！");
@@ -61,7 +56,7 @@ namespace AgriManagement
             {
                 if (_typy == "add")
                 {
-                    //_cloud.InsertUser(_sign, txt_id.Text, txt_username.Text, txt_psd.Password, txt_nickname.Text, DateTime.Now.ToShortTimeString());
+                    _cloud.PostInsertUser(txt_id.Text, txt_psd.Password, txt_nickname.Text);
                 }
                 else
                 {
@@ -72,7 +67,7 @@ namespace AgriManagement
                 this.Close();
                 pevent(this, "");
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("错误！");
             }

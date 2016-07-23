@@ -17,10 +17,8 @@
         <PasswordBox x:Name="txt_psd" HorizontalAlignment="Left" Height="23" Margin="110,40,0,0" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2"/>
         <Label x:Name="lb4" Content="确认密码：" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top"/>
         <PasswordBox x:Name="txt_compsd" HorizontalAlignment="Left" Height="23" Margin="110,70,0,0" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2"/>
-        <Label x:Name="lb5" Content="用户名：" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txt_username" HorizontalAlignment="Left" Height="23" Margin="110,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2"/>
-        <Label x:Name="lb6" Content="昵称：" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txt_nickname" HorizontalAlignment="Left" Height="23" Margin="110,130,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2"/>
+        <Label x:Name="lb6" Content="昵称：" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="txt_nickname" HorizontalAlignment="Left" Height="23" Margin="110,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200" Grid.ColumnSpan="2"/>
         <Button x:Name="btn_adduser" Content="确认" HorizontalAlignment="Left" Margin="10,200,0,0" VerticalAlignment="Top" Width="75" Click="btn_adduser_Click"/>
     </Grid>
 </Window>
