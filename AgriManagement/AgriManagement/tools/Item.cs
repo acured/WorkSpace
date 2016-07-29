@@ -23,12 +23,12 @@ namespace AgriManagement.tools
     {
         public int id { get; set; }
         public DateTime time { get; set; }
-        public double temperature { get; set; }
-        public double moisture { get; set; }
-        public double NH { get; set; }
-        public double data1 { get; set; }
-        public double data2 { get; set; }
-        public double data3 { get; set; }
+        public double temperatureA { get; set; }
+        public double moistureA { get; set; }
+        public double temperatureE { get; set; }
+        public double moistureE { get; set; }
+        public double temperatureE2 { get; set; }
+        public double moistureE2 { get; set; }
         public Status status { get; set; }
     }
 
@@ -37,9 +37,12 @@ namespace AgriManagement.tools
         public int id { get; set; }
         public string name { get; set; }
         public string area { get; set; }
-        public double temperature { get; set; }
-        public double moisture { get; set; }
-        public double NH { get; set; }
+        public double temperatureA { get; set; }
+        public double moistureA { get; set; }
+        public double temperatureE { get; set; }
+        public double moistureE { get; set; }
+        public double temperatureE2 { get; set; }
+        public double moistureE2 { get; set; }
         public DateTime time { get; set; }
         public Status status { get; set; }
         public bool isShow { get; set; }

@@ -116,11 +116,11 @@ namespace AgriManagement.tools
                 msg += "{\"name\" : \"" + key + "\",\"items\":[";
                 foreach (History h in items[key])
                 {
-                    if (h.temperature == 0 && h.moisture == 0 && h.NH == 0) continue;
+                    if (h.temperatureA == 0 && h.moistureA == 0 && h.temperatureE == 0) continue;
                     msg += "{\"temp\" : \"" 
-                        + h.temperature + "\",\"humidity\" : \"" 
-                        + h.moisture + "\",\"ch3\" : \""
-                        + h.NH + "\",\"ts\" : \"" 
+                        + h.temperatureA + "\",\"humidity\" : \"" 
+                        + h.moistureA + "\",\"ch3\" : \""
+                        + h.temperatureE + "\",\"ts\" : \"" 
                         + h.time.ToShortTimeString() + "\"},";
                 }
                 msg.Remove(msg.Length - 2);
@@ -143,11 +143,11 @@ namespace AgriManagement.tools
                 msg += "{\"region\" : \"" + key + "\",\"sensor\" : \"" + key + "\",\"items\":[";
                 foreach (History h in items[key])
                 {
-                    if (h.temperature == 0 && h.moisture == 0 && h.NH == 0) continue;
+                    if (h.temperatureA == 0 && h.moistureA == 0 && h.temperatureE == 0) continue;
                     msg += "{\"temp\" : \""
-                        + h.temperature + "\",\"humidity\" : \""
-                        + h.moisture + "\",\"ch3\" : \""
-                        + h.NH + "\",\"ts\" : \""
+                        + h.temperatureA + "\",\"humidity\" : \""
+                        + h.moistureA + "\",\"ch3\" : \""
+                        + h.temperatureE + "\",\"ts\" : \""
                         + h.time.ToShortTimeString() + "\"},";
                 }
                 msg.Remove(msg.Length - 2);

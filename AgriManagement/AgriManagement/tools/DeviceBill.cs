@@ -199,13 +199,13 @@ namespace AgriManagement.tools
                 int index = 7;
 
                 double _id = recv[index] * 100 + recv[index + 1];
-                double status = recv[index+2] * 256 + recv[index + 3];
-                double temp = recv[index + 4] * 256 + recv[index + 5];
-                double moist = recv[index + 6] * 256 + recv[index + 7];
-                double CH3 = recv[index + 8] * 256 + recv[index + 9];
-                double data1 = recv[index + 10] * 256 + recv[index + 11];
-                double data2 = recv[index + 12] * 256 + recv[index + 13];
-                double data3 = recv[index + 14] * 256 + recv[index + 15];
+                double status = (recv[index+2] * 256 + recv[index + 3])/10.0;
+                double temp = (recv[index + 4] * 256 + recv[index + 5])/10.0;
+                double moist = (recv[index + 6] * 256 + recv[index + 7])/10.0;
+                double CH3 = (recv[index + 8] * 256 + recv[index + 9])/10.0;
+                double data1 = (recv[index + 10] * 256 + recv[index + 11])/10.0;
+                double data2 = (recv[index + 12] * 256 + recv[index + 13])/10.0;
+                double data3 = (recv[index + 14] * 256 + recv[index + 15])/10.0;
 
                 double[] data = { _id, status, temp, moist, CH3, data1, data2, data3 };
 
@@ -252,7 +252,7 @@ namespace AgriManagement.tools
                 return null;
             }
         }
-        public double[] getNodeDebug(int id)
+        public double[] getNodeDebug(int id)//res1,res1是网络强度（对方强度/自己强度）
         {
             try
             {
@@ -264,8 +264,8 @@ namespace AgriManagement.tools
                 int index = 7;
 
                 double _id = recv[index] * 100 + recv[index + 1];
-                double res1 = recv[index + 2] * 256 + recv[index + 3];
-                double res2 = recv[index + 4] * 256 + recv[index + 5];
+                double res1 = BitConverter.ToInt16(new byte[] { recv[index + 3], recv[index + 2] }, 0);
+                double res2 = BitConverter.ToInt16(new byte[] { recv[index + 5], recv[index + 4] }, 0);
                 double data1 = recv[index + 6] * 256 + recv[index + 7];
 
                 double[] data = { _id, res1, res2, data1 };

@@ -150,13 +150,13 @@
                     <TextBox x:Name="txt_mos_max" HorizontalAlignment="Left" Height="23" Margin="569,62,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="txt_mos_min" HorizontalAlignment="Left" Height="23" Margin="769,62,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
                     <TextBox x:Name="txt_mos_deviation" HorizontalAlignment="Left" Height="23" Margin="969,62,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"/>
-                    <Label x:Name="label5" Content="RH（%）：" HorizontalAlignment="Left" Margin="421,110,0,0" VerticalAlignment="Top"/>
-                    <Label x:Name="label4_Copy4" Content="最大值：" HorizontalAlignment="Left" Margin="706,110,0,0" VerticalAlignment="Top"/>
-                    <Label Content="最大值：" HorizontalAlignment="Left" Margin="506,110,0,0" VerticalAlignment="Top"/>
-                    <Label Content="报警误差±：" HorizontalAlignment="Left" Margin="903,110,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="txt_RH_max" HorizontalAlignment="Left" Height="23" Margin="569,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="txt_RH_min" HorizontalAlignment="Left" Height="23" Margin="769,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
-                    <TextBox x:Name="txt_RH_deviation" HorizontalAlignment="Left" Height="23" Margin="969,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"/>
+                    <Label x:Name="label5" Visibility="Hidden" Content="RH（%）：" HorizontalAlignment="Left" Margin="421,110,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label4_Copy4" Visibility="Hidden" Content="最大值：" HorizontalAlignment="Left" Margin="706,110,0,0" VerticalAlignment="Top"/>
+                    <Label Content="最大值：" Visibility="Hidden"  HorizontalAlignment="Left" Margin="506,110,0,0" VerticalAlignment="Top"/>
+                    <Label Content="报警误差±：" Visibility="Hidden" HorizontalAlignment="Left" Margin="903,110,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txt_RH_max" Visibility="Hidden" HorizontalAlignment="Left" Height="23" Margin="569,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_RH_min" Visibility="Hidden" HorizontalAlignment="Left" Height="23" Margin="769,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="txt_RH_deviation" Visibility="Hidden" HorizontalAlignment="Left" Height="23" Margin="969,113,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="60"/>
                     <Button x:Name="btn_updateSetting" Content="确认" HorizontalAlignment="Left" Margin="428,172,0,0" VerticalAlignment="Top" Width="75" Click="btn_updateSetting_Click"/>
                     <CheckBox x:Name="cb_play" Content="异常播放音乐" HorizontalAlignment="Left" Margin="552,172,0,0" VerticalAlignment="Top"/>
 
@@ -213,7 +213,7 @@
 
                     <TreeView Margin="820,50,0,0" Name="tv_cmd" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="672">
                     </TreeView>
-                    <Label x:Name="label9_Copy6" Content="中心频点(M)：" HorizontalAlignment="Left" Margin="50,400,0,0" VerticalAlignment="Top"/>
+                    <Label x:Name="label9_Copy6" Content="中心频点(KHz)：" HorizontalAlignment="Left" Margin="50,400,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="label9_Copy3" Content="扩展因子SF：" HorizontalAlignment="Left" Margin="50,440,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="label9_Copy4" Content="带宽BW：" HorizontalAlignment="Left" Margin="50,480,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="label9_Copy5" Content="编码速率CR：" HorizontalAlignment="Left" Margin="50,520,0,0" VerticalAlignment="Top"/>
@@ -226,10 +226,10 @@
                     <CheckBox x:Name="txt_uhua" Content="是" HorizontalAlignment="Left" Margin="150,562,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="txt_enc" HorizontalAlignment="Left" Height="23" Margin="150,602,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107"/>
                     <Button x:Name="btn_read_def" IsEnabled="False" Content="测试" HorizontalAlignment="Left" Margin="57,640,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_def_Click" />
-                    <Button x:Name="btn_read" IsEnabled="False" Content="读取" HorizontalAlignment="Left" Margin="230,640,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_Click" />
+                    <Button x:Name="btn_read" IsEnabled="True" Content="读取" HorizontalAlignment="Left" Margin="230,640,0,0" VerticalAlignment="Top" Width="75" Click="btn_read_Click" />
                     <Button x:Name="btn_set" Content="设置" HorizontalAlignment="Left" Margin="331,640,0,0" VerticalAlignment="Top" Width="75" Click="btn_set_Click" />
-                    <Rectangle Fill="#00F4F4F5" HorizontalAlignment="Left" Height="340" Margin="38,382,0,0" Stroke="#FF7A7979" VerticalAlignment="Top" Width="384" Panel.ZIndex="9"/>
-                    
+                    <Rectangle Fill="#00F4F4F5" HorizontalAlignment="Left" Height="340" Margin="38,382,0,0" Stroke="#FF7A7979" VerticalAlignment="Top" Width="384" Panel.ZIndex="-9"/>
+
                     <Label x:Name="label9_Copy9" Content="网络ID：" HorizontalAlignment="Left" Margin="600,50,0,0" VerticalAlignment="Top"/>
                     <Label x:Name="label9_Copy10" Content="网络名称：" HorizontalAlignment="Left" Margin="600,100,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="txt_addarea" HorizontalAlignment="Left" Height="23" Margin="702,100,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="107"/>
@@ -243,6 +243,7 @@
                     <ComboBox x:Name="cmb_eqArea" HorizontalAlignment="Left" Margin="700,302,0,0" VerticalAlignment="Top" Width="110"/>
                     <Button x:Name="btn_addEq" Content="添加设备" HorizontalAlignment="Left" Margin="600,350,0,0" VerticalAlignment="Top" Width="75" Click="btn_addEq_Click"/>
                     <Button x:Name="btn_del" Content="删除设备（网络）" HorizontalAlignment="Left" Margin="700,350,0,0" VerticalAlignment="Top" Width="104" Click="btn_del_Click_1"/>
+                    <Button x:Name="button" Content="test" HorizontalAlignment="Left" Margin="600,406,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>

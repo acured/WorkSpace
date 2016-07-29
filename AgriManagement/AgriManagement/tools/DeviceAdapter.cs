@@ -156,9 +156,9 @@ namespace AgriManagement.tools
             }
             history.id = Convert.ToInt32(id);
             history.time = DateTime.Now;
-            history.moisture = ran.Next(100);
-            history.temperature = ran.Next(100);
-            history.NH = ran.Next(100);
+            history.moistureA = ran.Next(100);
+            history.temperatureA = ran.Next(100);
+            history.temperatureE = ran.Next(100);
             history.status = Status.Regular;
             return true;
         }

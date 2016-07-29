@@ -39,12 +39,12 @@ namespace AgriManagement
         double _maxN = Config.maxN;
         double _minN = Config.minN;
 
-        double _isShow_temp = Config.showT;
-        double _isShow_moist = Config.showM;
-        double _isShow_ch3 = Config.showC;
-        double _isShow_earth_temp = Config.showD1;
-        double _isShow_earth_moist = Config.showD2;
-        double _isShow_intensity = Config.showD3;
+        double _isShow_tempA = Config.showT;
+        double _isShow_moistA = Config.showM;
+        double _isShow_tempE = Config.showC;
+        double _isShow_moistE = Config.showD1;
+        double _isShow_tempE2 = Config.showD2;
+        double _isShow_moistE2 = Config.showD3;
 
         double _DivT = Config.DivT;
         double _DivM = Config.DivM;
@@ -113,9 +113,9 @@ namespace AgriManagement
         {
             History hnew = new History();
             hnew.id = h.id;
-            hnew.moisture = h.moisture;
-            hnew.NH = h.NH;
-            hnew.temperature = h.temperature;
+            hnew.moistureA = h.moistureA;
+            hnew.temperatureE = h.temperatureE;
+            hnew.temperatureA = h.temperatureA;
             hnew.time = h.time;
             return hnew;
         }
@@ -156,17 +156,17 @@ namespace AgriManagement
 
             if (_play == 1) cb_play.IsChecked = true;
             else cb_play.IsChecked = false;
-            if (_isShow_temp == 1) cb_temp.IsChecked = true;
+            if (_isShow_tempA == 1) cb_temp.IsChecked = true;
             else cb_temp.IsChecked = false;
-            if (_isShow_moist == 1) cb_moist.IsChecked = true;
+            if (_isShow_moistA == 1) cb_moist.IsChecked = true;
             else cb_moist.IsChecked = false;
-            if (_isShow_ch3 == 1) cb_ch3.IsChecked = true;
+            if (_isShow_tempE == 1) cb_ch3.IsChecked = true;
             else cb_ch3.IsChecked = false;
-            if (_isShow_earth_temp == 1) cb_data1.IsChecked = true;
+            if (_isShow_moistE == 1) cb_data1.IsChecked = true;
             else cb_data1.IsChecked = false;
-            if (_isShow_earth_moist == 1) cb_data2.IsChecked = true;
+            if (_isShow_tempE2 == 1) cb_data2.IsChecked = true;
             else cb_data2.IsChecked = false;
-            if (_isShow_intensity == 1) cb_data3.IsChecked = true;
+            if (_isShow_moistE2 == 1) cb_data3.IsChecked = true;
             else cb_data3.IsChecked = false;
             #endregion
 
@@ -474,9 +474,9 @@ namespace AgriManagement
                             status = _mytestdata[i].status,
                             area = _mytestdata[i].area,
                             id = _mytestdata[i].id,
-                            moisture = _mytestdata[i].moisture,
-                            NH = _mytestdata[i].NH,
-                            temperature = _mytestdata[i].temperature,
+                            moistureA = _mytestdata[i].moistureA,
+                            temperatureE = _mytestdata[i].temperatureE,
+                            temperatureA = _mytestdata[i].temperatureA,
                             time = _mytestdata[i].time,
                             isShow = true
                         };
@@ -557,17 +557,17 @@ namespace AgriManagement
                 if (items[id].historys.Count > _maxShow)
                 {
                     start = items[id].historys.Count - _maxShow;
-                    yAxie = top + heigh - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].temperature, 120, heigh);
+                    yAxie = top + heigh - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].temperatureA, 120, heigh);
                 }
                 else
                 {
                     start = 0;
-                    yAxie = top + heigh - StaticTools.GetYaxia(items[id].historys[0].temperature, 120, heigh);
+                    yAxie = top + heigh - StaticTools.GetYaxia(items[id].historys[0].temperatureA, 120, heigh);
                 }
                 int _uint = _maxShow / 20;
                 for (int i = start + 1; i < items[id].historys.Count; i++)
                 {
-                    double y = top + heigh - StaticTools.GetYaxia(items[id].historys[i].temperature, 120, heigh);
+                    double y = top + heigh - StaticTools.GetYaxia(items[id].historys[i].temperatureA, 120, heigh);
                     double x = xAxie + 2.2;
                     drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                     if ((i-start-1) % _uint == 0)
@@ -588,17 +588,17 @@ namespace AgriManagement
                 if (items[id].historys.Count > _maxShow)
                 {
                     start = items[id].historys.Count - _maxShow;
-                    yAxie = top + heigh + 240 - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].moisture, 120, heigh);
+                    yAxie = top + heigh + 240 - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].moistureA, 120, heigh);
                 }
                 else
                 {
                     start = 0;
-                    yAxie = top + heigh + 240 - StaticTools.GetYaxia(items[id].historys[0].moisture, 120, heigh);
+                    yAxie = top + heigh + 240 - StaticTools.GetYaxia(items[id].historys[0].moistureA, 120, heigh);
                 }
                 int _uint = _maxShow / 20;
                 for (int i = start + 1; i < items[id].historys.Count; i++)
                 {
-                    double y = top + heigh + 240 - StaticTools.GetYaxia(items[id].historys[i].moisture, 120, heigh);
+                    double y = top + heigh + 240 - StaticTools.GetYaxia(items[id].historys[i].moistureA, 120, heigh);
                     double x = xAxie + 2.2;
                     drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                     if ((i - start - 1) % _uint == 0)
@@ -619,17 +619,17 @@ namespace AgriManagement
                 if (items[id].historys.Count > _maxShow)
                 {
                     start = items[id].historys.Count - _maxShow;
-                    yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].moisture, 120, heigh);
+                    yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[items[id].historys.Count - _maxShow].moistureA, 120, heigh);
                 }
                 else
                 {
                     start = 0;
-                    yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[0].moisture, 120, heigh);
+                    yAxie = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[0].moistureA, 120, heigh);
                 }
                 int _uint = _maxShow / 20;
                 for (int i = start + 1; i < items[id].historys.Count; i++)
                 {
-                    double y = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[i].moisture, 120, heigh);
+                    double y = top + heigh + 480 - StaticTools.GetYaxia(items[id].historys[i].moistureA, 120, heigh);
                     double x = xAxie + 2.2;
                     drawLine(cav_chat, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                     if ((i - start - 1) % _uint == 0)
@@ -666,15 +666,15 @@ namespace AgriManagement
                     double count = 0;
                     foreach (string key in data)
                     {
-                        maxTemp += items[key].historys[i].temperature;
-                        maxNH += items[key].historys[i].NH;
-                        maxMio += items[key].historys[i].moisture;
+                        maxTemp += items[key].historys[i].temperatureA;
+                        maxNH += items[key].historys[i].temperatureE;
+                        maxMio += items[key].historys[i].moistureA;
                         dt = items[key].historys[i].time;
                         count++;
                     }
-                    h.moisture = maxMio / count;
-                    h.NH = maxNH / count;
-                    h.temperature = maxTemp / count;
+                    h.moistureA = maxMio / count;
+                    h.temperatureE = maxNH / count;
+                    h.temperatureA = maxTemp / count;
                     h.time = dt;
                     lh.Add(h);
                 }
@@ -688,15 +688,15 @@ namespace AgriManagement
                     double count = 0;
                     foreach (string key in data)
                     {
-                        maxTemp += items[key].historys[i].temperature;
-                        maxNH += items[key].historys[i].NH;
-                        maxMio += items[key].historys[i].moisture;
+                        maxTemp += items[key].historys[i].temperatureA;
+                        maxNH += items[key].historys[i].temperatureE;
+                        maxMio += items[key].historys[i].moistureA;
                         dt = items[key].historys[i].time;
                         count++;
                     }
-                    h.moisture = maxMio / count;
-                    h.NH = maxNH / count;
-                    h.temperature = maxTemp / count;
+                    h.moistureA = maxMio / count;
+                    h.temperatureE = maxNH / count;
+                    h.temperatureA = maxTemp / count;
                     h.time = dt;
                     lh.Add(h);
                 }
@@ -743,12 +743,12 @@ namespace AgriManagement
                     double yAxie = 0;
 
                     int start = 0;
-                    yAxie = top + heigh - StaticTools.GetYaxia(hs[0].temperature, 120, heigh);
+                    yAxie = top + heigh - StaticTools.GetYaxia(hs[0].temperatureA, 120, heigh);
 
                     int _uint = 36;
                     for (int i = start + 1; i < hs.Count; i++)
                     {
-                        double y = top + heigh - StaticTools.GetYaxia(hs[i].temperature, 120, heigh);
+                        double y = top + heigh - StaticTools.GetYaxia(hs[i].temperatureA, 120, heigh);
                         double x = xAxie + 2.2;
                         drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                         if (i % _uint == 0 || i == start + 1)
@@ -766,12 +766,12 @@ namespace AgriManagement
                     double yAxie = 0;
 
                     int start = 0;
-                    yAxie = top + 240 + heigh - StaticTools.GetYaxia(hs[0].moisture, 120, heigh);
+                    yAxie = top + 240 + heigh - StaticTools.GetYaxia(hs[0].moistureA, 120, heigh);
 
                     int _uint = 36;
                     for (int i = start + 1; i < hs.Count; i++)
                     {
-                        double y = top + 240 + heigh - StaticTools.GetYaxia(hs[i].moisture, 120, heigh);
+                        double y = top + 240 + heigh - StaticTools.GetYaxia(hs[i].moistureA, 120, heigh);
                         double x = xAxie + 2.2;
                         drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                         if (i % _uint == 0 || i == start + 1)
@@ -789,12 +789,12 @@ namespace AgriManagement
                     double yAxie = 0;
 
                     int start = 0;
-                    yAxie = top + 480 + heigh - StaticTools.GetYaxia(hs[0].NH, 120, heigh);
+                    yAxie = top + 480 + heigh - StaticTools.GetYaxia(hs[0].temperatureE, 120, heigh);
 
                     int _uint = 36;
                     for (int i = start + 1; i < hs.Count; i++)
                     {
-                        double y = top + 480 + heigh - StaticTools.GetYaxia(hs[i].NH, 120, heigh);
+                        double y = top + 480 + heigh - StaticTools.GetYaxia(hs[i].temperatureE, 120, heigh);
                         double x = xAxie + 2.2;
                         drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
                         if (i % _uint == 0 || i == start + 1)
@@ -907,6 +907,14 @@ namespace AgriManagement
             });
         }
 
+        private int getRemoteID(int nodeid)
+        {
+            if (nodeid == 101) return 101;
+            if (nodeid == 201) return 202;
+
+            return nodeid;
+        }
+
         private void updateSenser()
         {
             //getData();
@@ -936,17 +944,24 @@ namespace AgriManagement
                             double temp = 0;
                             double moist = 0;
                             double NH = 0;
+                            double data1 = 0;
+                            double data2 = 0;
+                            double data3 = 0;
 
-                            Status status = checkData(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
-                            items[id.ToString()].historys.Add(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
+
+                            Status status = checkData(new History() { id = id, moistureA = moist, temperatureE = NH, status = Status.Error, temperatureA = temp, moistureE = data1, temperatureE2 = data2, moistureE2 = data3, time = DateTime.Now });
+                            items[id.ToString()].historys.Add(new History() { id = id, moistureA = moist, temperatureE = NH, status = Status.Error, temperatureA = temp, moistureE = data1, temperatureE2 = data2, moistureE2 = data3, time = DateTime.Now });
                             items[id.ToString()].status = Status.OffLine;
                             DataGridShow error = new DataGridShow();
                             error.area = items[id.ToString()].area;
                             error.id = items[id.ToString()].id;
-                            error.moisture = moist;
-                            error.NH = NH;
+                            error.moistureA = moist;
+                            error.temperatureE = NH;
+                            error.moistureE = data1;
+                            error.temperatureE2 = data2;
+                            error.moistureE2 = data3;
                             error.status = status;
-                            error.temperature = temp;
+                            error.temperatureA = temp;
                             error.time = DateTime.Now;
                             errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
 
@@ -955,9 +970,12 @@ namespace AgriManagement
                                 status = status,
                                 area = items[id.ToString()].area,
                                 id = items[id.ToString()].id,
-                                moisture = moist,
-                                NH = NH,
-                                temperature = temp,
+                                moistureA = moist,
+                                temperatureE = NH,
+                                temperatureA = temp,
+                                moistureE = data1,
+                                temperatureE2 = data2,
+                                moistureE2 = data3,
                                 time = DateTime.Now,
                                 isShow = false
                             };
@@ -978,9 +996,12 @@ namespace AgriManagement
                             double temp = data[2];
                             double moist = data[3];
                             double NH = data[4];
+                            double data1 = data[5];
+                            double data2 = data[6];
+                            double data3 = data[7];
 
-                            Status status = checkData(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
-                            items[id.ToString()].historys.Add(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
+                            Status status = checkData(new History() { id = id, moistureA = moist, temperatureE = NH, status = Status.Error, temperatureA = temp, moistureE = data1, temperatureE2 = data2,moistureE2 = data3, time = DateTime.Now });
+                            items[id.ToString()].historys.Add(new History() { id = id, moistureA = moist, temperatureE = NH, status = Status.Error, temperatureA = temp, moistureE = data1, temperatureE2 = data2, moistureE2 = data3, time = DateTime.Now });
 
                             if (status == Status.Warning || status == Status.Error)
                             {
@@ -988,10 +1009,13 @@ namespace AgriManagement
                                 DataGridShow error = new DataGridShow();
                                 error.area = items[id.ToString()].area;
                                 error.id = items[id.ToString()].id;
-                                error.moisture = moist;
-                                error.NH = NH;
+                                error.moistureA = moist;
+                                error.temperatureE = NH;
                                 error.status = status;
-                                error.temperature = temp;
+                                error.moistureE = data1;
+                                error.temperatureE2 = data2;
+                                error.moistureE2 = data3;
+                                error.temperatureA = temp;
                                 error.time = DateTime.Now;
                                 errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
                                 if (items[id.ToString()].ErrorCount > 2)
@@ -999,8 +1023,9 @@ namespace AgriManagement
                                     if (items[id.ToString()].lastStatus == Status.Regular)
                                     {
                                         items[id.ToString()].lastStatus = Status.Warning;
-                                        startFan(Convert.ToInt32(areaId), Convert.ToInt32(node));
-                                        startFan(Convert.ToInt32(areaId), Convert.ToInt32(node));
+                                        int remoteid = getRemoteID(id);
+                                        startFan(remoteid/100, remoteid%100);
+                                        startFan(remoteid / 100, remoteid % 100);
 
                                         alert(items[id.ToString()].id.ToString());
                                     }
@@ -1011,8 +1036,9 @@ namespace AgriManagement
                                 if (items[id.ToString()].lastStatus == Status.Warning)
                                 {
                                     items[id.ToString()].lastStatus = Status.Regular;
-                                    stopFan(Convert.ToInt32(areaId), Convert.ToInt32(node));
-                                    stopFan(Convert.ToInt32(areaId), Convert.ToInt32(node));
+                                    int remoteid = getRemoteID(id);
+                                    stopFan(remoteid / 100, remoteid % 100);
+                                    stopFan(remoteid / 100, remoteid % 100);
                                     items[id.ToString()].ErrorCount = 0;
                                 }
                             }
@@ -1022,9 +1048,12 @@ namespace AgriManagement
                                 status = status,
                                 area = items[id.ToString()].area,
                                 id = items[id.ToString()].id,
-                                moisture = moist,
-                                NH = NH,
-                                temperature = temp,
+                                moistureA = moist,
+                                temperatureE = NH,
+                                temperatureA = temp,
+                                moistureE = data1,
+                                temperatureE2 = data2,
+                                moistureE2 = data3,
                                 time = DateTime.Now,
                                 isShow = false
                             };
@@ -1054,7 +1083,7 @@ namespace AgriManagement
             {
                 int leftoff = 0;
                 int topoff = 20;
-                int width = 300;
+                int width =380;
                 int heigh = 120;
 
                 int count = cav_show.Children.Count;
@@ -1102,52 +1131,58 @@ namespace AgriManagement
                                     int itemCount = 0;
 
                                     string str = items[i].historys[index - 1].id.ToString() + "号设备";
-                                    if (_isShow_temp == 1)
+                                    if (_isShow_tempA == 1)
                                     {
+                                        string show = items[i].historys[index - 1].temperatureA.ToString() == "6553.5" ? "N/A" : items[i].historys[index - 1].temperatureA.ToString();
                                         if (itemCount % 2 == 0)
                                             str += "\n";
                                         else str += "        ";
-                                        str += "温度：" + items[i].historys[index - 1].temperature.ToString() + "·C";
+                                        str += "空气温度：" + show + "·C";
                                         itemCount++;
                                     }
-                                    if (_isShow_moist == 1)
+                                    if (_isShow_moistA == 1)
                                     {
+                                        string show = items[i].historys[index - 1].moistureA.ToString() == "6553.5" ? "N/A" : items[i].historys[index - 1].moistureA.ToString();
                                         if (itemCount % 2 == 0)
                                             str += "\n";
                                         else str += "        ";
-                                        str += "湿度：" + items[i].historys[index - 1].moisture.ToString() + "";
+                                        str += "空气湿度：" + show + "";
                                         itemCount++;
                                     }
-                                    if (_isShow_ch3 == 1)
+                                    if (_isShow_tempE == 1)
                                     {
+                                        string show = items[i].historys[index - 1].temperatureE.ToString() == "6553.5" ? "N/A" : items[i].historys[index - 1].temperatureE.ToString();
                                         if (itemCount % 2 == 0)
                                             str += "\n";
                                         else str += "        ";
-                                        str += "氨气：" + items[i].historys[index - 1].NH.ToString() + "";
+                                        str += "土壤温度1：" + show + "·C";
                                         itemCount++;
                                     }
-                                    if (_isShow_intensity == 1)
+                                    if (_isShow_moistE2 == 1)
                                     {
+                                        string show = items[i].historys[index - 1].moistureE.ToString() == "6553.5" ? "N/A" : items[i].historys[index - 1].moistureE.ToString();
                                         if (itemCount % 2 == 0)
                                             str += "\n";
                                         else str += "        ";
-                                        str += "光强：" + items[i].historys[index - 1].data3.ToString() + "";
+                                        str += "土壤湿度1：" + show + "";
                                         itemCount++;
                                     }
-                                    if (_isShow_earth_temp == 1)
+                                    if (_isShow_moistE == 1)
                                     {
+                                        string show = items[i].historys[index - 1].temperatureE2.ToString() == "6553.5" ? "N/A" : items[i].historys[index - 1].moistureE2.ToString();
                                         if (itemCount % 2 == 0)
                                             str += "\n";
                                         else str += "        ";
-                                        str += "土壤温度：" + items[i].historys[index - 1].data1.ToString() + "·C";
+                                        str += "土壤温度2：" + show + "·C";
                                         itemCount++;
                                     }
-                                    if (_isShow_earth_moist == 1)
+                                    if (_isShow_tempE2 == 1)
                                     {
+                                        string show = items[i].historys[index - 1].moistureE2.ToString() == "6553.5" ? "N/A" : items[i].historys[index - 1].temperatureE2.ToString();
                                         if (itemCount % 2 == 0)
                                             str += "\n";
                                         else str += "        ";
-                                        str += "土壤湿度：" + items[i].historys[index - 1].data2.ToString() + "";
+                                        str += "土壤湿度2：" + show + "";
                                         itemCount++;
                                     }
 
@@ -1216,16 +1251,16 @@ namespace AgriManagement
                         double moist = 0;
                         double NH = 0;
 
-                        Status status = checkData(new History() { id = i, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
-                        items[i.ToString()].historys.Add(new History() { id = i, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
+                        Status status = checkData(new History() { id = i, moistureA = moist, temperatureE = NH, status = Status.Error, temperatureA = temp, time = DateTime.Now });
+                        items[i.ToString()].historys.Add(new History() { id = i, moistureA = moist, temperatureE = NH, status = Status.Error, temperatureA = temp, time = DateTime.Now });
 
                         DataGridShow error = new DataGridShow();
                         error.area = items[i.ToString()].area;
                         error.id = items[i.ToString()].id;
-                        error.moisture = moist;
-                        error.NH = NH;
+                        error.moistureA = moist;
+                        error.temperatureE = NH;
                         error.status = status;
-                        error.temperature = temp;
+                        error.temperatureA = temp;
                         error.time = DateTime.Now;
                         errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
 
@@ -1234,9 +1269,9 @@ namespace AgriManagement
                             status = status,
                             area = items[i.ToString()].area,
                             id = items[i.ToString()].id,
-                            moisture = moist,
-                            NH = NH,
-                            temperature = temp,
+                            moistureA = moist,
+                            temperatureE = NH,
+                            temperatureA = temp,
                             time = DateTime.Now,
                             isShow = false
                         };
@@ -1264,8 +1299,8 @@ namespace AgriManagement
                         double NH = (data[i + 8] * 256 + data[i + 9]) / 10.0;
                         Console.WriteLine("发送中....温度：{0}， 湿度：{1}， 氨气浓度：{2}", temp, moist, NH);
 
-                        Status status = checkData(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
-                        items[_id.ToString()].historys.Add(new History() { id = id, moisture = moist, NH = NH, status = Status.Error, temperature = temp, time = DateTime.Now });
+                        Status status = checkData(new History() { id = id, moistureA = moist, temperatureE = NH, status = Status.Error, temperatureA = temp, time = DateTime.Now });
+                        items[_id.ToString()].historys.Add(new History() { id = id, moistureA = moist, temperatureE = NH, status = Status.Error, temperatureA = temp, time = DateTime.Now });
 
                         if (status == Status.Warning||status == Status.Error)
                         {
@@ -1274,10 +1309,10 @@ namespace AgriManagement
                             DataGridShow error = new DataGridShow();
                             error.area = items[_id.ToString()].area;
                             error.id = items[_id.ToString()].id;
-                            error.moisture = moist;
-                            error.NH = NH;
+                            error.moistureA = moist;
+                            error.temperatureE = NH;
                             error.status = status;
-                            error.temperature = temp;
+                            error.temperatureA = temp;
                             error.time = DateTime.Now;
                             errorData.Dispatcher.Invoke(() => { errorData.Items.Add(error); });
                             if (_id == 1&&errorCount>2)
@@ -1328,9 +1363,9 @@ namespace AgriManagement
                             status = status,
                             area = items[_id.ToString()].area,
                             id = items[_id.ToString()].id,
-                            moisture = moist,
-                            NH = NH,
-                            temperature = temp,
+                            moistureA = moist,
+                            temperatureE = NH,
+                            temperatureA = temp,
                             time = DateTime.Now,
                             isShow = false
                         };
@@ -1354,14 +1389,37 @@ namespace AgriManagement
 
         private Status checkData(History item)
         {
-            if (item.temperature > (_maxT + _DivT) || item.temperature < (_minT - _DivT)) return Status.Error;
-            if (item.moisture > (_maxM + _DivM) || item.moisture < (_minM - _DivM)) return Status.Error;
-            if (item.NH > (_maxN + _DivN) || item.NH < (_minN - _DivN)) return Status.Error;
+            if (item.temperatureA < 6553)
+            {
+                if (item.temperatureA > (_maxT + _DivT) || item.temperatureA < (_minT - _DivT)) return Status.Error;
+                if (item.temperatureA > _maxT || item.temperatureA < _minT) return Status.Warning;
+            }
+            if (item.moistureA < 6553)
+            {
+                if (item.moistureA > (_maxM + _DivM) || item.moistureA < (_minM - _DivM)) return Status.Error;
+                if (item.moistureA > _maxM || item.moistureA < _minM) return Status.Warning;
+            }
+            if(item.temperatureE<6553)
+            {
+                if (item.temperatureE > (_maxT + _DivT) || item.temperatureE < (_minT - _DivT)) return Status.Error;
+                if (item.temperatureE > _maxT || item.temperatureE < _minT) return Status.Warning;
+            }
+            if (item.moistureE < 6553)
+            {
+                if (item.moistureE > (_maxM + _DivM) || item.moistureE < (_minM - _DivM)) return Status.Error;
+                if (item.moistureE > _maxM || item.moistureE < _minM) return Status.Warning;
+            }
+            if (item.temperatureE2 < 6553)
+            {
+                if (item.temperatureE2 > (_maxT + _DivT) || item.temperatureE2 < (_minT - _DivT)) return Status.Error;
+                if (item.temperatureE2 > _maxT || item.temperatureE2 < _minT) return Status.Warning;
+            }
+            if (item.moistureE2 < 6553)
+            {
+                if (item.moistureE2 > (_maxM + _DivM) || item.moistureE2 < (_minM - _DivM)) return Status.Error;
+                if (item.moistureE2 > _maxM || item.moistureE2 < _minM) return Status.Warning;
+            }
 
-            if (item.temperature > _maxT || item.temperature < _minT) return Status.Warning;
-            if (item.moisture > _maxM || item.moisture < _minM) return Status.Warning;
-            if (item.NH > _maxN || item.NH < _minN) return Status.Warning;
-            
             return Status.Regular;
         }
 
@@ -1424,21 +1482,21 @@ namespace AgriManagement
 
                     int start = 0;
                     if (type == "温度")
-                        yAxie = top + heigh - StaticTools.GetYaxia(dir[0].temperature, 120, heigh);
+                        yAxie = top + heigh - StaticTools.GetYaxia(dir[0].temperatureA, 120, heigh);
                     else if (type == "湿度")
-                        yAxie = top + heigh - StaticTools.GetYaxia(dir[0].moisture, 120, heigh);
+                        yAxie = top + heigh - StaticTools.GetYaxia(dir[0].moistureA, 120, heigh);
                     else
-                        yAxie = top + heigh - StaticTools.GetYaxia(dir[0].NH, 120, heigh);
+                        yAxie = top + heigh - StaticTools.GetYaxia(dir[0].temperatureE, 120, heigh);
 
                     for (int i = start + 1; i < count; i++)
                     {
                         double y = 0;
                         if (type == "温度")
-                            y = top + heigh - StaticTools.GetYaxia(dir[i * index].temperature, 120, heigh);
+                            y = top + heigh - StaticTools.GetYaxia(dir[i * index].temperatureA, 120, heigh);
                         else if (type == "湿度")
-                            y = top + heigh - StaticTools.GetYaxia(dir[i * index].moisture, 120, heigh);
+                            y = top + heigh - StaticTools.GetYaxia(dir[i * index].moistureA, 120, heigh);
                         else
-                            y = top + heigh - StaticTools.GetYaxia(dir[i * index].NH, 120, heigh);
+                            y = top + heigh - StaticTools.GetYaxia(dir[i * index].temperatureE, 120, heigh);
 
                         double x = xAxie + 40;
                         drawLine(cav_history, new Point(xAxie, yAxie), new Point(x, y), Brushes.Blue);
@@ -1472,25 +1530,25 @@ namespace AgriManagement
         {
             try
             {
-                if (cb_temp.IsChecked == true) _isShow_temp = 1;
-                else _isShow_temp = 0;
-                if (cb_moist.IsChecked == true) _isShow_moist = 1;
-                else _isShow_moist = 0;
-                if (cb_ch3.IsChecked == true) _isShow_ch3 = 1;
-                else _isShow_ch3 = 0;
-                if (cb_data1.IsChecked == true) _isShow_earth_temp = 1;
-                else _isShow_earth_temp = 0;
-                if (cb_data2.IsChecked == true) _isShow_earth_moist = 1;
-                else _isShow_earth_moist = 0;
-                if (cb_data3.IsChecked == true) _isShow_intensity = 1;
-                else _isShow_intensity = 0;
+                if (cb_temp.IsChecked == true) _isShow_tempA = 1;
+                else _isShow_tempA = 0;
+                if (cb_moist.IsChecked == true) _isShow_moistA = 1;
+                else _isShow_moistA = 0;
+                if (cb_ch3.IsChecked == true) _isShow_tempE = 1;
+                else _isShow_tempE = 0;
+                if (cb_data1.IsChecked == true) _isShow_moistE = 1;
+                else _isShow_moistE = 0;
+                if (cb_data2.IsChecked == true) _isShow_tempE2 = 1;
+                else _isShow_tempE2 = 0;
+                if (cb_data3.IsChecked == true) _isShow_moistE2 = 1;
+                else _isShow_moistE2 = 0;
 
-                StaticTools.SaveConfig("showT", _isShow_temp.ToString());
-                StaticTools.SaveConfig("showM", _isShow_moist.ToString());
-                StaticTools.SaveConfig("showC", _isShow_ch3.ToString());
-                StaticTools.SaveConfig("showD1", _isShow_earth_temp.ToString());
-                StaticTools.SaveConfig("showD2", _isShow_earth_moist.ToString());
-                StaticTools.SaveConfig("showD3", _isShow_intensity.ToString());
+                StaticTools.SaveConfig("showT", _isShow_tempA.ToString());
+                StaticTools.SaveConfig("showM", _isShow_moistA.ToString());
+                StaticTools.SaveConfig("showC", _isShow_tempE.ToString());
+                StaticTools.SaveConfig("showD1", _isShow_moistE.ToString());
+                StaticTools.SaveConfig("showD2", _isShow_tempE2.ToString());
+                StaticTools.SaveConfig("showD3", _isShow_moistE2.ToString());
 
                 if (cb_play.IsChecked == true) _play = 1;
                 else _play = 0;
@@ -1736,20 +1794,22 @@ namespace AgriManagement
                 return;
             }
 
-            try {
+            try
+            {
                 List<int> list = new List<int>();
                 int _list_id = Convert.ToInt32(areaid) * 100 + Convert.ToInt32(id);
                 list.Add(_list_id);
-                //if (!_bill.AddBSList(list))
-                //{
-                //    MessageBox.Show("设备更新失败，请检查设备是否连接！");
-                //    return;
-                //}
+                if (!_bill.AddBSList(list))
+                {
+                    MessageBox.Show("设备更新失败，请检查设备是否连接！");
+                    return;
+                }
             }
             catch { MessageBox.Show("故障！"); }
 
 
             StaticTools.AddNode(areaid,area, id, name);
+
             update_cmd();
             MessageBox.Show("添加成功！");
         }
@@ -1946,8 +2006,8 @@ namespace AgriManagement
                 try
                 {
                     int freq = data[0]/1000;
-                    string bw = getBWShow(data[1].ToString());
-                    int sf = data[2];
+                    string bw = getBWShow(data[2].ToString());
+                    int sf = data[1];
                     int rc = data[3];
                     int check = data[4];
                     int enc = data[5];
@@ -2006,7 +2066,10 @@ namespace AgriManagement
             enc = enc < -1 ? -1 : enc;
 
             if (_bill.setBS(freq, sf, bw, rc, check, enc))
+            {
+                MessageBox.Show("BS设置成功！");
                 return;
+            }
             else
                 MessageBox.Show("未读出设备信息，请检查设备是否正常！");
         }
@@ -2172,12 +2235,31 @@ namespace AgriManagement
                 string node = cont.Header.ToString().Split('：')[1];
                 string area = cont1.Header.ToString().Substring(0, 2);
 
+                try
+                {
+                    List<int> list = new List<int>();
+                    string areaid = StaticTools.getAreaID(area);
+                    int _list_id = Convert.ToInt32(areaid) * 100 + Convert.ToInt32(node);
+                    list.Add(_list_id);
+                    if (!_bill.DeleteBSList(list))
+                    {
+                        MessageBox.Show("设备更新失败，请检查设备是否连接！");
+                        return;
+                    }
+                }
+                catch { MessageBox.Show("故障！"); }
+
                 if (StaticTools.DelNode(area, node))
                     MessageBox.Show("删除成功！");
                 else MessageBox.Show("删除失败！");
             }
 
             update_cmd();
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            _bill.getNodeDebug(0101);
         }
     }
 }
